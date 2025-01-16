@@ -1,0 +1,10 @@
+[project]
+name = "GrandMA3 MIDI Mapper"
+version = "0.1.0"
+description = "Make advanced custom MIDI to OSC mappings for GrandMA3"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "python-osc>=1.9.3",
+    "mido[ports-rtmidi]>=1.3.3"
+]
