@@ -9,7 +9,7 @@ from pythonosc.udp_client import SimpleUDPClient
 
 from GMA3MM.enums import MIDIMessageTypes
 
-midi_device_names = mido.get_input_names()
+midi_device_names = mido.get_output_names()
 print('Connected devices: ' +', '.join(midi_device_names))
 if len(midi_device_names) < 1:
     print("No MIDI devices detected")

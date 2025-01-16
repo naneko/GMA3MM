@@ -128,7 +128,8 @@ def exec_data(address, *args):
     # Set LED status
 
 
-MIDI.set_output_device('Akai APC40')
+apc40_device_names = [d for d in mido.get_output_names() if 'Akai APC40' in d]
+MIDI.set_output_device(apc40_device_names[0])
 
 MIDI.output.send(mido.Message('note_on', channel=0, note=OutboundNotes.track_selection.value, velocity=1))
 
