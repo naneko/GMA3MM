@@ -1,17 +1,22 @@
+import os
 import threading
-from numbers import Number
+from pathlib import Path
 from time import sleep
 
 import mido
 from pythonosc.dispatcher import Dispatcher
-from pythonosc.osc_server import OSCUDPServer
+from pythonosc.osc_server import ThreadingOSCUDPServer
 from pythonosc.udp_client import SimpleUDPClient
 
 from GMA3MM.enums import MIDIMessageTypes
 
-midi_device_names = mido.get_output_names()
-print('Connected devices: ' +', '.join(midi_device_names))
-if len(midi_device_names) < 1:
+os.add_dll_directory(Path(__file__).parent)
+
+midi_output_device_names = mido.get_output_names()
+midi_input_device_names = mido.get_input_names()
+print('Connected output MIDI devices: ' +', '.join(midi_output_device_names))
+print('Connected input MIDI devices: ' +', '.join(midi_input_device_names))
+if len(midi_output_device_names) < 1:
     print("No MIDI devices detected")
     exit(1)
 
@@ -20,19 +25,21 @@ class MIDI:
     Handles MIDI input and output
     """
     output = None
-    input = mido.open_input()
+    input = None
 
     @staticmethod
-    def set_output_device(device_name: str):
+    def set_device(output_device_name: str, input_device_name: str):
         """
         Set output device based on name. Check first log message for currently connected device names.
 
-        :param device_name: Device name
+        :param output_device_name: Output device name
+        :param input_device_name: Input device name
         """
-        MIDI.output = mido.open_output(device_name)
+        MIDI.output = mido.open_output(output_device_name)
+        MIDI.input = mido.open_input(input_device_name)
 
 # TODO: Allow IP to be set externally
-osc_client_ip = "127.0.0.1"
+osc_client_ip = "10.1.1.100"
 osc_client_port = 8000
 OSC = SimpleUDPClient(osc_client_ip, osc_client_port)
 
@@ -78,24 +85,29 @@ def midi_handler():
     """
     Blocking MIDI router that routes to route_midi decorated functions
     """
+    print("MIDI Thread Started", flush=True)
+    # Yes, this is the best way to do this. Try/except will hide key errors in the callback functions. Ask me how I know.
     for msg in MIDI.input:
-        print("MIDI Debug: " + msg.__repr__(), flush=True)
-        try:
-            if msg.is_cc():
-                midi_routes[msg.type][msg.channel][msg.control](msg)
-            else:
-                midi_routes[msg.type][msg.channel][msg.note](msg)
-        except KeyError:
-            pass
+        # print("MIDI Debug: " + repr(msg), flush=True)
+        if msg.is_cc():
+            if msg.type in midi_routes:
+                if msg.channel in midi_routes[msg.type]:
+                    if msg.control in midi_routes[msg.type][msg.channel]:
+                        midi_routes[msg.type][msg.channel][msg.control](msg)
+        elif msg.type in midi_routes:
+            if msg.channel in midi_routes[msg.type]:
+                if msg.note in midi_routes[msg.type][msg.channel]:
+                    midi_routes[msg.type][msg.channel][msg.note](msg)
+    print("Warning: MIDI handler terminated.")
 
 def osc_server():
     """
     Blocking OSC server
     """
-    # TODO: Allow IP and port to be set externally
-    ip = "127.0.0.1"
+    print("OSC Thread Started", flush=True)  # TODO: Allow IP and port to be set externally
+    ip = "10.1.1.100"
     port = 8001
-    server = OSCUDPServer((ip, port), dispatcher)
+    server = ThreadingOSCUDPServer((ip, port), dispatcher)
     server.serve_forever()
 
 def remap(old_val, old_min, old_max, new_min, new_max):

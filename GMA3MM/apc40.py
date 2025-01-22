@@ -3,7 +3,7 @@ from time import sleep
 
 import mido
 
-from GMA3MM.app import route_midi, route_osc, start, OSC, remap, dispatcher, osc_server, MIDI
+from GMA3MM.app import route_midi, route_osc, start, OSC, remap, dispatcher, osc_server, MIDI, midi_handler
 
 from GMA3MM.enums import MIDIMessageTypes, InboundNotes, OutboundNotes, OutboundControlSignals, KnobLEDState, \
     InboundControlSignals, GMA3ExecMapToAPC40, APC40MapToGMA3Exec
@@ -11,6 +11,32 @@ from GMA3MM.enums import MIDIMessageTypes, InboundNotes, OutboundNotes, Outbound
 
 class State:
     selected_page = 0
+    fader_values = {
+        201: -1,
+        202: -1,
+        203: -1,
+        204: -1,
+        205: -1,
+        206: -1,
+        207: -1,
+        208: -1,
+        'apc1': -1,
+        'apc2': -1,
+        'apc3': -1,
+        'apc4': -1,
+        'apc5': -1,
+        'apc6': -1,
+        'apc7': -1,
+        'apc8': -1,
+        'apcached1': -1,
+        'apcached2': -1,
+        'apcached3': -1,
+        'apcached4': -1,
+        'apcached5': -1,
+        'apcached6': -1,
+        'apcached7': -1,
+        'apcached8': -1,
+    }
 
 
 def clear_track_select():
@@ -63,8 +89,21 @@ def track_select_master(msg):
 
 @route_midi([MIDIMessageTypes.control_change], 0, 8, [InboundControlSignals.track_level])
 def fader_update(msg):
+    # TODO: Smoothing margin (snap after certain amount of value change)
     # TODO: After page change, don't update value until fader reaches current fader level
     value = remap(msg.value, 0, 127, 0, 100)
+    State.fader_values[f'apc{msg.channel + 1}'] = value
+    ch = msg.channel + 201
+    if State.fader_values[ch] != -1: # Value exists
+        if State.fader_values[ch] > State.fader_values[f'apcached{msg.channel + 1}']: # If GMA3 value is greater than cached APC fader value, meaning the fader is under the latch
+            if State.fader_values[ch] > value: # Then check if the current fader value is still less than the GMA3 value
+                print(f'Fader {ch} at {value} | Waiting for latch above {State.fader_values[ch]}', flush=True)
+                return
+        elif State.fader_values[ch] < State.fader_values[f'apcached{msg.channel + 1}']: # Fader was over latch
+            if State.fader_values[ch] < value: # Still over latch?
+                print(f'Fader {ch} at {value} | Waiting for latch below {State.fader_values[ch]}', flush=True)
+                return
+    State.fader_values[ch] = -1
     print(f'/Page{State.selected_page + 1}/Fader20{msg.channel + 1} | {value}', flush=True)
     OSC.send_message(f'/Page{State.selected_page + 1}/Fader20{msg.channel + 1}', value)
 
@@ -106,6 +145,9 @@ def exec_data(address, *args):
     # TODO: Use match statements to change LED behaviors, add asynchronous flashing for any LED at any rate
     # fader_types = ['Master', 'X', 'XA', 'XB', 'Temp', 'Rate', 'Speed', 'Time']
     # button_types = ['>>>', '<<<', 'Black', 'DoubleSpeed', 'Flash', 'Go+', 'Go-', 'Goto', 'HalfSpeed', 'Kill', 'LearnSpeed', 'Load', 'On', 'Off', 'Pause', 'Rate1', 'Selecet', 'SelectFixtures', 'Speed1', 'Swap', 'Temp', 'Toggle', 'Top']
+    if int(index) in State.fader_values:
+        State.fader_values[int(index)] = fader_value
+        State.fader_values[f'apcached{index-200}'] = State.fader_values[f'apc{index-200}']
     if index in GMA3ExecMapToAPC40:
         exec_map_data = GMA3ExecMapToAPC40[index]
         # print(f'{index} | {button_type} | {fader_type} | {fader_value}')
@@ -128,8 +170,13 @@ def exec_data(address, *args):
     # Set LED status
 
 
-apc40_device_names = [d for d in mido.get_output_names() if 'Akai APC40' in d]
-MIDI.set_output_device(apc40_device_names[0])
+apc40_output_device_names = [d for d in mido.get_output_names() if 'Akai APC40' in d]
+apc40_input_device_names = [d for d in mido.get_input_names() if 'Akai APC40' in d]
+if len(apc40_output_device_names) < 1:
+    print("No APC40 device detected")
+    exit(1)
+print(f'Connecting to {apc40_output_device_names[0]}', flush=True)
+MIDI.set_device(apc40_output_device_names[0], apc40_input_device_names[0])
 
 MIDI.output.send(mido.Message('note_on', channel=0, note=OutboundNotes.track_selection.value, velocity=1))
 
