@@ -173,236 +173,241 @@ class MIDIMessageTypes(enum.Enum):
 GMA3ExecMapToAPC40 = {
     101: {
         'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_1.value,
+        'grid_button': OutboundNotes.clip_row_5.value,
         'channel': 0
     },
     102: {
         'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_1.value,
+        'grid_button': OutboundNotes.clip_row_5.value,
         'channel': 1
     },
     103: {
         'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_1.value,
+        'grid_button': OutboundNotes.clip_row_5.value,
         'channel': 2
     },
     104: {
         'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_1.value,
+        'grid_button': OutboundNotes.clip_row_5.value,
         'channel': 3
-    },
-    105: {
-        'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_1.value,
-        'channel': 4
     },
     106: {
         'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_1.value,
-        'channel': 5
+        'grid_button': OutboundNotes.clip_row_5.value,
+        'channel': 4
     },
     107: {
         'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_1.value,
-        'channel': 6
+        'grid_button': OutboundNotes.clip_row_5.value,
+        'channel': 5
     },
     108: {
         'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_1.value,
+        'grid_button': OutboundNotes.clip_row_5.value,
+        'channel': 6
+    },
+    109: {
+        'primary_button': OutboundNotes.solo.value,
+        'grid_button': OutboundNotes.clip_row_5.value,
         'channel': 7
     },
     201: {
         'fader': OutboundControlSignals.track_level.value,
         'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
+        'grid_button': OutboundNotes.clip_row_4.value,
         'channel': 0
     },
     202: {
         'fader': OutboundControlSignals.track_level.value,
         'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
+        'grid_button': OutboundNotes.clip_row_4.value,
         'channel': 1
     },
     203: {
         'fader': OutboundControlSignals.track_level.value,
         'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
+        'grid_button': OutboundNotes.clip_row_4.value,
         'channel': 2
     },
     204: {
         'fader': OutboundControlSignals.track_level.value,
         'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
+        'grid_button': OutboundNotes.clip_row_4.value,
         'channel': 3
-    },
-    205: {
-        'fader': OutboundControlSignals.track_level.value,
-        'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
-        'channel': 4
     },
     206: {
         'fader': OutboundControlSignals.track_level.value,
         'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
-        'channel': 5
+        'grid_button': OutboundNotes.clip_row_4.value,
+        'channel': 4
     },
     207: {
         'fader': OutboundControlSignals.track_level.value,
         'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
-        'channel': 6
+        'grid_button': OutboundNotes.clip_row_4.value,
+        'channel': 5
     },
     208: {
         'fader': OutboundControlSignals.track_level.value,
         'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
+        'grid_button': OutboundNotes.clip_row_4.value,
+        'channel': 6
+    },
+    209: {
+        'fader': OutboundControlSignals.track_level.value,
+        'primary_button': OutboundNotes.record_arm.value,
+        'grid_button': OutboundNotes.clip_row_4.value,
         'channel': 7
     },
     301: {
-        'knob': OutboundControlSignals.device_knob_1.value,
-        'primary_button': OutboundNotes.device_on_off.value,
+        'knob': OutboundControlSignals.device_knob_5.value,
+        'primary_button': OutboundNotes.detail_view.value,
         'grid_button': OutboundNotes.clip_row_3.value,
         'channel': 0
     },
     302: {
-        'knob': OutboundControlSignals.device_knob_2.value,
-        'primary_button': OutboundNotes.arrow_left.value,
+        'knob': OutboundControlSignals.device_knob_6.value,
+        'primary_button': OutboundNotes.rec_quant.value,
         'grid_button': OutboundNotes.clip_row_3.value,
         'channel': 1
     },
     303: {
-        'knob': OutboundControlSignals.device_knob_3.value,
-        'primary_button': OutboundNotes.arrow_right.value,
+        'knob': OutboundControlSignals.device_knob_7.value,
+        'primary_button': OutboundNotes.midi_overdub.value,
         'grid_button': OutboundNotes.clip_row_3.value,
         'channel': 2
     },
     304: {
-        'knob': OutboundControlSignals.device_knob_4.value,
-        'primary_button': OutboundNotes.detail_view.value,
+        'knob': OutboundControlSignals.device_knob_8.value,
+        'primary_button': OutboundNotes.metronome.value,
         'grid_button': OutboundNotes.clip_row_3.value,
         'channel': 3
     },
-    305: {
-        'knob': OutboundControlSignals.device_knob_5.value,
-        'primary_button': OutboundNotes.rec_quant.value,
-        'grid_button': OutboundNotes.clip_row_3.value,
+    306: {
+        'primary_button': OutboundNotes.clip_row_3.value,
         'channel': 4
     },
-    306: {
-        'knob': OutboundControlSignals.device_knob_6.value,
-        'primary_button': OutboundNotes.midi_overdub.value,
-        'grid_button': OutboundNotes.clip_row_3.value,
+    307: {
+        'primary_button': OutboundNotes.clip_row_3.value,
         'channel': 5
     },
-    307: {
-        'knob': OutboundControlSignals.device_knob_7.value,
-        'primary_button': OutboundNotes.metronome.value,
-        'grid_button': OutboundNotes.clip_row_3.value,
+    308: {
+        'primary_button': OutboundNotes.clip_row_3.value,
         'channel': 6
     },
-    308: {
-        'knob': OutboundControlSignals.device_knob_8.value,
-        'primary_button': OutboundNotes.clip_track.value,
-        'grid_button': OutboundNotes.clip_row_3.value,
+    309: {
+        'primary_button': OutboundNotes.clip_row_3.value,
         'channel': 7
     },
     401: {
-        'primary_button': OutboundNotes.clip_row_4.value,
+        'knob': OutboundControlSignals.device_knob_1.value,
+        'grid_button': OutboundNotes.clip_row_2.value,
+        'primary_button': OutboundNotes.clip_track.value,
         'channel': 0
     },
     402: {
-        'primary_button': OutboundNotes.clip_row_4.value,
+        'knob': OutboundControlSignals.device_knob_2.value,
+        'grid_button': OutboundNotes.clip_row_2.value,
+        'primary_button': OutboundNotes.device_on_off.value,
         'channel': 1
     },
     403: {
-        'primary_button': OutboundNotes.clip_row_4.value,
+        'knob': OutboundControlSignals.device_knob_3.value,
+        'grid_button': OutboundNotes.clip_row_2.value,
+        'primary_button': OutboundNotes.arrow_left.value,
         'channel': 2
     },
     404: {
-        'primary_button': OutboundNotes.clip_row_4.value,
+        'knob': OutboundControlSignals.device_knob_4.value,
+        'grid_button': OutboundNotes.clip_row_2.value,
+        'primary_button': OutboundNotes.arrow_right.value,
         'channel': 3
-    },
-    405: {
-        'primary_button': OutboundNotes.clip_row_4.value,
-        'channel': 4
     },
     406: {
-        'primary_button': OutboundNotes.clip_row_4.value,
-        'channel': 5
+        'primary_button': OutboundNotes.clip_row_2.value,
+        'channel': 4
     },
     407: {
-        'primary_button': OutboundNotes.clip_row_4.value,
-        'channel': 6
+        'primary_button': OutboundNotes.clip_row_2.value,
+        'channel': 5
     },
     408: {
-        'primary_button': OutboundNotes.clip_row_4.value,
-        'channel': 7
-    },
-    191: {
-        'primary_button': OutboundNotes.clip_row_5.value,
-        'channel': 0
-    },
-    192: {
-        'primary_button': OutboundNotes.clip_row_5.value,
-        'channel': 1
-    },
-    193: {
-        'primary_button': OutboundNotes.clip_row_5.value,
-        'channel': 2
-    },
-    194: {
-        'primary_button': OutboundNotes.clip_row_5.value,
-        'channel': 3
-    },
-    195: {
-        'primary_button': OutboundNotes.clip_row_5.value,
-        'channel': 4
-    },
-    196: {
-        'primary_button': OutboundNotes.clip_row_5.value,
-        'channel': 5
-    },
-    197: {
-        'primary_button': OutboundNotes.clip_row_5.value,
+        'primary_button': OutboundNotes.clip_row_2.value,
         'channel': 6
     },
-    198: {
-        'primary_button': OutboundNotes.clip_row_5.value,
+    409: {
+        'primary_button': OutboundNotes.clip_row_2.value,
         'channel': 7
     },
-    291: {
+    210: {
+        'fader': OutboundControlSignals.master_level.value,
         'primary_button': OutboundNotes.clip_stop.value,
         'channel': 0
-    },
-    292: {
-        'primary_button': OutboundNotes.clip_stop.value,
-        'channel': 1
-    },
-    293: {
-        'primary_button': OutboundNotes.clip_stop.value,
-        'channel': 2
-    },
-    294: {
-        'primary_button': OutboundNotes.clip_stop.value,
-        'channel': 3
-    },
-    295: {
-        'primary_button': OutboundNotes.clip_stop.value,
-        'channel': 4
-    },
-    296: {
-        'primary_button': OutboundNotes.clip_stop.value,
-        'channel': 5
-    },
-    297: {
-        'primary_button': OutboundNotes.clip_stop.value,
-        'channel': 6
-    },
-    298: {
-        'primary_button': OutboundNotes.clip_stop.value,
-        'channel': 7
-    },
+    }
+    # 191: {
+    #     'primary_button': OutboundNotes.clip_row_5.value,
+    #     'channel': 0
+    # },
+    # 192: {
+    #     'primary_button': OutboundNotes.clip_row_5.value,
+    #     'channel': 1
+    # },
+    # 193: {
+    #     'primary_button': OutboundNotes.clip_row_5.value,
+    #     'channel': 2
+    # },
+    # 194: {
+    #     'primary_button': OutboundNotes.clip_row_5.value,
+    #     'channel': 3
+    # },
+    # 195: {
+    #     'primary_button': OutboundNotes.clip_row_5.value,
+    #     'channel': 4
+    # },
+    # 196: {
+    #     'primary_button': OutboundNotes.clip_row_5.value,
+    #     'channel': 5
+    # },
+    # 197: {
+    #     'primary_button': OutboundNotes.clip_row_5.value,
+    #     'channel': 6
+    # },
+    # 198: {
+    #     'primary_button': OutboundNotes.clip_row_5.value,
+    #     'channel': 7
+    # },
+    # 291: {
+    #     'primary_button': OutboundNotes.clip_stop.value,
+    #     'channel': 0
+    # },
+    # 292: {
+    #     'primary_button': OutboundNotes.clip_stop.value,
+    #     'channel': 1
+    # },
+    # 293: {
+    #     'primary_button': OutboundNotes.clip_stop.value,
+    #     'channel': 2
+    # },
+    # 294: {
+    #     'primary_button': OutboundNotes.clip_stop.value,
+    #     'channel': 3
+    # },
+    # 295: {
+    #     'primary_button': OutboundNotes.clip_stop.value,
+    #     'channel': 4
+    # },
+    # 296: {
+    #     'primary_button': OutboundNotes.clip_stop.value,
+    #     'channel': 5
+    # },
+    # 297: {
+    #     'primary_button': OutboundNotes.clip_stop.value,
+    #     'channel': 6
+    # },
+    # 298: {
+    #     'primary_button': OutboundNotes.clip_stop.value,
+    #     'channel': 7
+    # },
 }
 
 APC40MapToGMA3Exec = {
@@ -412,105 +417,106 @@ APC40MapToGMA3Exec = {
         1: 202,
         2: 203,
         3: 204,
-        4: 205,
-        5: 206,
-        6: 207,
-        7: 208,
+        4: 206,
+        5: 207,
+        6: 208,
+        7: 209,
     },
     InboundNotes.record_arm.value: {
         0: 201,
         1: 202,
         2: 203,
         3: 204,
-        4: 205,
-        5: 206,
-        6: 207,
-        7: 208,
+        4: 206,
+        5: 207,
+        6: 208,
+        7: 209,
     },
     InboundNotes.solo.value: {
         0: 101,
         1: 102,
         2: 103,
         3: 104,
-        4: 105,
-        5: 106,
-        6: 107,
-        7: 108,
-    },
-    InboundNotes.clip_row_1.value: {
-        0: 101,
-        1: 102,
-        2: 103,
-        3: 104,
-        4: 105,
-        5: 106,
-        6: 107,
-        7: 108,
+        4: 106,
+        5: 107,
+        6: 108,
+        7: 109,
     },
     InboundNotes.clip_row_2.value: {
-        0: 201,
-        1: 202,
-        2: 203,
-        3: 204,
-        4: 205,
-        5: 206,
-        6: 207,
-        7: 208,
+        0: 401,
+        1: 402,
+        2: 403,
+        3: 404,
+        4: 406,
+        5: 407,
+        6: 408,
+        7: 409,
     },
     InboundNotes.clip_row_3.value: {
         0: 301,
         1: 302,
         2: 303,
         3: 304,
-        4: 305,
-        5: 306,
-        6: 307,
-        7: 308,
+        4: 306,
+        5: 307,
+        6: 308,
+        7: 309,
     },
     InboundNotes.clip_row_4.value: {
-        0: 401,
-        1: 402,
-        2: 403,
-        3: 404,
-        4: 405,
-        5: 406,
-        6: 407,
-        7: 408,
+        0: 201,
+        1: 202,
+        2: 203,
+        3: 204,
+        4: 206,
+        5: 207,
+        6: 208,
+        7: 209,
     },
     InboundNotes.clip_row_5.value: {
-        0: 191,
-        1: 192,
-        2: 193,
-        3: 194,
-        4: 195,
-        5: 196,
-        6: 197,
-        7: 198,
+        0: 101,
+        1: 102,
+        2: 103,
+        3: 104,
+        4: 106,
+        5: 107,
+        6: 108,
+        7: 109,
     },
-    InboundNotes.clip_stop.value: {
-        0: 291,
-        1: 292,
-        2: 293,
-        3: 294,
-        4: 295,
-        5: 296,
-        6: 297,
-        7: 298,
-    },
-    InboundControlSignals.device_knob_1.value: 301,
-    InboundControlSignals.device_knob_2.value: 302,
-    InboundControlSignals.device_knob_3.value: 303,
-    InboundControlSignals.device_knob_4.value: 304,
-    InboundControlSignals.device_knob_5.value: 305,
-    InboundControlSignals.device_knob_6.value: 306,
-    InboundControlSignals.device_knob_7.value: 307,
-    InboundControlSignals.device_knob_8.value: 308,
-    InboundNotes.clip_track.value: 301,
-    InboundNotes.device_on_off.value: 302,
-    InboundNotes.arrow_left.value: 303,
-    InboundNotes.arrow_right.value: 304,
-    InboundNotes.detail_view.value: 305,
-    InboundNotes.rec_quant.value: 306,
-    InboundNotes.midi_overdub.value: 307,
-    InboundNotes.metronome.value: 308,
+    # InboundNotes.clip_row_5.value: {
+    #     0: 191,
+    #     1: 192,
+    #     2: 193,
+    #     3: 194,
+    #     4: 195,
+    #     5: 196,
+    #     6: 197,
+    #     7: 198,
+    # },
+    # InboundNotes.clip_stop.value: {
+    #     0: 291,
+    #     1: 292,
+    #     2: 293,
+    #     3: 294,
+    #     4: 295,
+    #     5: 296,
+    #     6: 297,
+    #     7: 298,
+    # },
+    InboundControlSignals.device_knob_1.value: 401,
+    InboundControlSignals.device_knob_2.value: 402,
+    InboundControlSignals.device_knob_3.value: 403,
+    InboundControlSignals.device_knob_4.value: 404,
+    InboundControlSignals.device_knob_5.value: 301,
+    InboundControlSignals.device_knob_6.value: 302,
+    InboundControlSignals.device_knob_7.value: 303,
+    InboundControlSignals.device_knob_8.value: 304,
+    InboundNotes.clip_track.value: 401,
+    InboundNotes.device_on_off.value: 402,
+    InboundNotes.arrow_left.value: 403,
+    InboundNotes.arrow_right.value: 404,
+    InboundNotes.detail_view.value: 301,
+    InboundNotes.rec_quant.value: 302,
+    InboundNotes.midi_overdub.value: 303,
+    InboundNotes.metronome.value: 304,
+    InboundControlSignals.master_level.value: 210,
 }

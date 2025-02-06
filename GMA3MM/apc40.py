@@ -3,7 +3,7 @@ from time import sleep
 
 import mido
 
-from GMA3MM.app import route_midi, route_osc, start, OSC, remap, dispatcher, osc_server, MIDI, midi_handler
+from GMA3MM.app import route_midi, route_osc, start, OSC, remap, MIDI
 
 from GMA3MM.enums import MIDIMessageTypes, InboundNotes, OutboundNotes, OutboundControlSignals, KnobLEDState, \
     InboundControlSignals, GMA3ExecMapToAPC40, APC40MapToGMA3Exec
@@ -16,10 +16,10 @@ class State:
         202: -1,
         203: -1,
         204: -1,
-        205: -1,
         206: -1,
         207: -1,
         208: -1,
+        209: -1,
         'apc1': -1,
         'apc2': -1,
         'apc3': -1,
@@ -93,7 +93,10 @@ def fader_update(msg):
     # TODO: After page change, don't update value until fader reaches current fader level
     value = remap(msg.value, 0, 127, 0, 100)
     State.fader_values[f'apc{msg.channel + 1}'] = value
-    ch = msg.channel + 201
+    if msg.channel < 4:
+        ch = msg.channel + 201
+    else:
+        ch = msg.channel + 201 + 1 # Skip unused executor
     if State.fader_values[ch] != -1: # Value exists
         if State.fader_values[ch] > State.fader_values[f'apcached{msg.channel + 1}']: # If GMA3 value is greater than cached APC fader value, meaning the fader is under the latch
             if State.fader_values[ch] > value: # Then check if the current fader value is still less than the GMA3 value
@@ -104,8 +107,8 @@ def fader_update(msg):
                 print(f'Fader {ch} at {value} | Waiting for latch below {State.fader_values[ch]}', flush=True)
                 return
     State.fader_values[ch] = -1
-    print(f'/Page{State.selected_page + 1}/Fader20{msg.channel + 1} | {value}', flush=True)
-    OSC.send_message(f'/Page{State.selected_page + 1}/Fader20{msg.channel + 1}', value)
+    print(f'/Page{State.selected_page + 1}/Fader{ch} | {value}', flush=True)
+    OSC.send_message(f'/Page{State.selected_page + 1}/Fader{ch}', value)
 
 btn_signals = [InboundNotes.clip_row_1, InboundNotes.clip_row_2, InboundNotes.clip_row_3,
                  InboundNotes.clip_row_4, InboundNotes.clip_row_5, InboundNotes.clip_stop,
@@ -119,8 +122,10 @@ btn_signals = [InboundNotes.clip_row_1, InboundNotes.clip_row_2, InboundNotes.cl
 
 @route_midi([MIDIMessageTypes.note_on, MIDIMessageTypes.note_off, MIDIMessageTypes.control_change], 0, 8, btn_signals)
 def button_update(msg):
+    if msg.note not in APC40MapToGMA3Exec:
+        return
     executor = APC40MapToGMA3Exec[msg.note]
-    if executor is not int:
+    if type(executor) is not int:
         executor = executor[msg.channel]
     if msg.type == MIDIMessageTypes.note_on.value:
         print(f'/Page{State.selected_page + 1}/Key{executor} ON', flush=True)
@@ -132,6 +137,26 @@ def button_update(msg):
 @route_midi([MIDIMessageTypes.control_change], 0, 1, [InboundControlSignals.device_knob_1, InboundControlSignals.device_knob_2, InboundControlSignals.device_knob_3, InboundControlSignals.device_knob_4, InboundControlSignals.device_knob_5, InboundControlSignals.device_knob_6, InboundControlSignals.device_knob_7, InboundControlSignals.device_knob_8])
 def device_knob(msg):
     MIDI.output.send(msg.copy(value=msg.value))
+    value = remap(msg.value, 0, 127, 0, 100)
+    match msg.control:
+        case OutboundControlSignals.device_knob_1.value:
+            ch = 401
+        case OutboundControlSignals.device_knob_2.value:
+            ch = 402
+        case OutboundControlSignals.device_knob_3.value:
+            ch = 403
+        case OutboundControlSignals.device_knob_4.value:
+            ch = 404
+        case OutboundControlSignals.device_knob_5.value:
+            ch = 301
+        case OutboundControlSignals.device_knob_6.value:
+            ch = 302
+        case OutboundControlSignals.device_knob_7.value:
+            ch = 303
+        case OutboundControlSignals.device_knob_8.value:
+            ch = 304
+    print(f'/Page{State.selected_page + 1}/Fader{ch} | {value}', flush=True)
+    OSC.send_message(f'/Page{State.selected_page + 1}/Fader{ch}', value)
 
 # @route_osc('/*')
 # def test_osc(address, *args):
