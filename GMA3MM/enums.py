@@ -284,19 +284,27 @@ GMA3ExecMapToAPC40 = {
         'channel': 3
     },
     306: {
-        'primary_button': OutboundNotes.clip_row_3.value,
+        'knob': OutboundControlSignals.track_knob_5.value,
+        'primary_button': OutboundNotes.pan.value,
+        'grid_button': OutboundNotes.clip_row_3.value,
         'channel': 4
     },
     307: {
-        'primary_button': OutboundNotes.clip_row_3.value,
+        'knob': OutboundControlSignals.track_knob_6.value,
+        'primary_button': OutboundNotes.send_a.value,
+        'grid_button': OutboundNotes.clip_row_3.value,
         'channel': 5
     },
     308: {
-        'primary_button': OutboundNotes.clip_row_3.value,
+        'knob': OutboundControlSignals.track_knob_7.value,
+        'primary_button': OutboundNotes.send_b.value,
+        'grid_button': OutboundNotes.clip_row_3.value,
         'channel': 6
     },
     309: {
-        'primary_button': OutboundNotes.clip_row_3.value,
+        'knob': OutboundControlSignals.track_knob_8.value,
+        'primary_button': OutboundNotes.send_c.value,
+        'grid_button': OutboundNotes.clip_row_3.value,
         'channel': 7
     },
     401: {
@@ -324,24 +332,27 @@ GMA3ExecMapToAPC40 = {
         'channel': 3
     },
     406: {
-        'primary_button': OutboundNotes.clip_row_2.value,
+        'knob': OutboundControlSignals.track_knob_1.value,
+        'grid_button': OutboundNotes.clip_row_2.value,
         'channel': 4
     },
     407: {
-        'primary_button': OutboundNotes.clip_row_2.value,
+        'knob': OutboundControlSignals.track_knob_2.value,
+        'grid_button': OutboundNotes.clip_row_2.value,
         'channel': 5
     },
     408: {
-        'primary_button': OutboundNotes.clip_row_2.value,
+        'knob': OutboundControlSignals.track_knob_3.value,
+        'grid_button': OutboundNotes.clip_row_2.value,
         'channel': 6
     },
     409: {
-        'primary_button': OutboundNotes.clip_row_2.value,
+        'knob': OutboundControlSignals.track_knob_4.value,
+        'grid_button': OutboundNotes.clip_row_2.value,
         'channel': 7
     },
     210: {
         'fader': OutboundControlSignals.master_level.value,
-        'primary_button': OutboundNotes.clip_stop.value,
         'channel': 0
     }
     # 191: {
@@ -518,5 +529,8 @@ APC40MapToGMA3Exec = {
     InboundNotes.rec_quant.value: 302,
     InboundNotes.midi_overdub.value: 303,
     InboundNotes.metronome.value: 304,
-    InboundControlSignals.master_level.value: 210,
+    InboundControlSignals.master_level.value: {
+        0: 210
+    },
+    InboundNotes.stop_all_clips.value: 210
 }

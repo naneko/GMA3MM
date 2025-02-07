@@ -20,6 +20,9 @@ if len(midi_output_device_names) < 1:
     print("No MIDI devices detected")
     exit(1)
 
+midi_thread_lock = threading.Lock()
+osc_thread_lock = threading.Lock()
+
 class MIDI:
     """
     Handles MIDI input and output
