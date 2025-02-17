@@ -1,5 +1,6 @@
 import enum
 
+
 # TODO: Move APC40-specific enums to own file
 class ClipLaunchLEDState(enum.IntEnum):
     off = 0
@@ -10,11 +11,13 @@ class ClipLaunchLEDState(enum.IntEnum):
     yellow = 5
     yellow_blink = 6
 
+
 class KnobLEDState(enum.IntEnum):
     off = 0
     single = 1
     volume = 2
     pan = 3
+
 
 class OutboundNotes(enum.IntEnum):
     record_arm = 0x30
@@ -36,7 +39,7 @@ class OutboundNotes(enum.IntEnum):
     midi_overdub = 0x40
     metronome = 0x41
     master = 0x50
-    scene_launch_1 = 0x52 # 0=off, 1=on, 2=blink
+    scene_launch_1 = 0x52  # 0=off, 1=on, 2=blink
     scene_launch_2 = 0x53
     scene_launch_3 = 0x54
     scene_launch_4 = 0x55
@@ -46,10 +49,11 @@ class OutboundNotes(enum.IntEnum):
     send_b = 0x59
     send_c = 0x5A
 
+
 class OutboundControlSignals(enum.IntEnum):
     track_level = 0x07
-    master_level = 0x0e
-    crossfader = 0x0f
+    master_level = 0x0E
+    crossfader = 0x0F
     device_knob_1 = 0x10
     device_knob_2 = 0x11
     device_knob_3 = 0x12
@@ -82,6 +86,7 @@ class OutboundControlSignals(enum.IntEnum):
     track_knob_6_led = 0x3D
     track_knob_7_led = 0x3E
     track_knob_8_led = 0x3F
+
 
 class InboundNotes(enum.IntEnum):
     record_arm = 0x30
@@ -125,10 +130,11 @@ class InboundNotes(enum.IntEnum):
     nudge_plus = 0x64
     nudge_minus = 0x65
 
+
 class InboundControlSignals(enum.IntEnum):
     track_level = 0x07
-    master_level = 0x0e
-    crossfader = 0x0f
+    master_level = 0x0E
+    crossfader = 0x0F
     device_knob_1 = 0x10
     device_knob_2 = 0x11
     device_knob_3 = 0x12
@@ -147,214 +153,213 @@ class InboundControlSignals(enum.IntEnum):
     track_knob_8 = 0x37
     footswitch_1 = 0x40
     footswitch_2 = 0x41
-    cue_level = 0x2f
+    cue_level = 0x2F
+
 
 class MIDIMessageTypes(enum.Enum):
-    note_off = 'note_off'
-    note_on = 'note_on'
-    polytouch = 'polytouch'
-    control_change = 'control_change'
-    program_change = 'program_change'
-    aftertouch = 'aftertouch'
-    pitchwheel = 'pitchwheel'
-    sysex = 'sysex'
-    quarter_frame = 'quarter_frame'
-    songpos = 'songpos'
-    song_select = 'song_select'
-    tune_request = 'tune_request'
-    clock = 'clock'
-    start = 'start'
-    cont = 'continue'
-    stop = 'stop'
-    active_sensing = 'active_sensing'
-    reset = 'reset'
+    note_off = "note_off"
+    note_on = "note_on"
+    polytouch = "polytouch"
+    control_change = "control_change"
+    program_change = "program_change"
+    aftertouch = "aftertouch"
+    pitchwheel = "pitchwheel"
+    sysex = "sysex"
+    quarter_frame = "quarter_frame"
+    songpos = "songpos"
+    song_select = "song_select"
+    tune_request = "tune_request"
+    clock = "clock"
+    start = "start"
+    cont = "continue"
+    stop = "stop"
+    active_sensing = "active_sensing"
+    reset = "reset"
+
 
 # TODO: Move to JSON
 GMA3ExecMapToAPC40 = {
     101: {
-        'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_5.value,
-        'channel': 0
+        "primary_button": OutboundNotes.solo.value,
+        "grid_button": OutboundNotes.clip_row_5.value,
+        "channel": 0,
     },
     102: {
-        'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_5.value,
-        'channel': 1
+        "primary_button": OutboundNotes.solo.value,
+        "grid_button": OutboundNotes.clip_row_5.value,
+        "channel": 1,
     },
     103: {
-        'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_5.value,
-        'channel': 2
+        "primary_button": OutboundNotes.solo.value,
+        "grid_button": OutboundNotes.clip_row_5.value,
+        "channel": 2,
     },
     104: {
-        'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_5.value,
-        'channel': 3
+        "primary_button": OutboundNotes.solo.value,
+        "grid_button": OutboundNotes.clip_row_5.value,
+        "channel": 3,
     },
     106: {
-        'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_5.value,
-        'channel': 4
+        "primary_button": OutboundNotes.solo.value,
+        "grid_button": OutboundNotes.clip_row_5.value,
+        "channel": 4,
     },
     107: {
-        'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_5.value,
-        'channel': 5
+        "primary_button": OutboundNotes.solo.value,
+        "grid_button": OutboundNotes.clip_row_5.value,
+        "channel": 5,
     },
     108: {
-        'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_5.value,
-        'channel': 6
+        "primary_button": OutboundNotes.solo.value,
+        "grid_button": OutboundNotes.clip_row_5.value,
+        "channel": 6,
     },
     109: {
-        'primary_button': OutboundNotes.solo.value,
-        'grid_button': OutboundNotes.clip_row_5.value,
-        'channel': 7
+        "primary_button": OutboundNotes.solo.value,
+        "grid_button": OutboundNotes.clip_row_5.value,
+        "channel": 7,
     },
     201: {
-        'fader': OutboundControlSignals.track_level.value,
-        'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_4.value,
-        'channel': 0
+        "fader": OutboundControlSignals.track_level.value,
+        "primary_button": OutboundNotes.record_arm.value,
+        "grid_button": OutboundNotes.clip_row_4.value,
+        "channel": 0,
     },
     202: {
-        'fader': OutboundControlSignals.track_level.value,
-        'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_4.value,
-        'channel': 1
+        "fader": OutboundControlSignals.track_level.value,
+        "primary_button": OutboundNotes.record_arm.value,
+        "grid_button": OutboundNotes.clip_row_4.value,
+        "channel": 1,
     },
     203: {
-        'fader': OutboundControlSignals.track_level.value,
-        'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_4.value,
-        'channel': 2
+        "fader": OutboundControlSignals.track_level.value,
+        "primary_button": OutboundNotes.record_arm.value,
+        "grid_button": OutboundNotes.clip_row_4.value,
+        "channel": 2,
     },
     204: {
-        'fader': OutboundControlSignals.track_level.value,
-        'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_4.value,
-        'channel': 3
+        "fader": OutboundControlSignals.track_level.value,
+        "primary_button": OutboundNotes.record_arm.value,
+        "grid_button": OutboundNotes.clip_row_4.value,
+        "channel": 3,
     },
     206: {
-        'fader': OutboundControlSignals.track_level.value,
-        'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_4.value,
-        'channel': 4
+        "fader": OutboundControlSignals.track_level.value,
+        "primary_button": OutboundNotes.record_arm.value,
+        "grid_button": OutboundNotes.clip_row_4.value,
+        "channel": 4,
     },
     207: {
-        'fader': OutboundControlSignals.track_level.value,
-        'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_4.value,
-        'channel': 5
+        "fader": OutboundControlSignals.track_level.value,
+        "primary_button": OutboundNotes.record_arm.value,
+        "grid_button": OutboundNotes.clip_row_4.value,
+        "channel": 5,
     },
     208: {
-        'fader': OutboundControlSignals.track_level.value,
-        'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_4.value,
-        'channel': 6
+        "fader": OutboundControlSignals.track_level.value,
+        "primary_button": OutboundNotes.record_arm.value,
+        "grid_button": OutboundNotes.clip_row_4.value,
+        "channel": 6,
     },
     209: {
-        'fader': OutboundControlSignals.track_level.value,
-        'primary_button': OutboundNotes.record_arm.value,
-        'grid_button': OutboundNotes.clip_row_4.value,
-        'channel': 7
+        "fader": OutboundControlSignals.track_level.value,
+        "primary_button": OutboundNotes.record_arm.value,
+        "grid_button": OutboundNotes.clip_row_4.value,
+        "channel": 7,
     },
     301: {
-        'knob': OutboundControlSignals.device_knob_5.value,
-        'primary_button': OutboundNotes.detail_view.value,
-        'grid_button': OutboundNotes.clip_row_3.value,
-        'channel': 0
+        "knob": OutboundControlSignals.device_knob_5.value,
+        "primary_button": OutboundNotes.detail_view.value,
+        "grid_button": OutboundNotes.clip_row_3.value,
+        "channel": 0,
     },
     302: {
-        'knob': OutboundControlSignals.device_knob_6.value,
-        'primary_button': OutboundNotes.rec_quant.value,
-        'grid_button': OutboundNotes.clip_row_3.value,
-        'channel': 1
+        "knob": OutboundControlSignals.device_knob_6.value,
+        "primary_button": OutboundNotes.rec_quant.value,
+        "grid_button": OutboundNotes.clip_row_3.value,
+        "channel": 1,
     },
     303: {
-        'knob': OutboundControlSignals.device_knob_7.value,
-        'primary_button': OutboundNotes.midi_overdub.value,
-        'grid_button': OutboundNotes.clip_row_3.value,
-        'channel': 2
+        "knob": OutboundControlSignals.device_knob_7.value,
+        "primary_button": OutboundNotes.midi_overdub.value,
+        "grid_button": OutboundNotes.clip_row_3.value,
+        "channel": 2,
     },
     304: {
-        'knob': OutboundControlSignals.device_knob_8.value,
-        'primary_button': OutboundNotes.metronome.value,
-        'grid_button': OutboundNotes.clip_row_3.value,
-        'channel': 3
+        "knob": OutboundControlSignals.device_knob_8.value,
+        "primary_button": OutboundNotes.metronome.value,
+        "grid_button": OutboundNotes.clip_row_3.value,
+        "channel": 3,
     },
     306: {
-        'knob': OutboundControlSignals.track_knob_5.value,
-        'primary_button': OutboundNotes.pan.value,
-        'grid_button': OutboundNotes.clip_row_3.value,
-        'channel': 4
+        "knob": OutboundControlSignals.track_knob_5.value,
+        "primary_button": OutboundNotes.pan.value,
+        "grid_button": OutboundNotes.clip_row_3.value,
+        "channel": 4,
     },
     307: {
-        'knob': OutboundControlSignals.track_knob_6.value,
-        'primary_button': OutboundNotes.send_a.value,
-        'grid_button': OutboundNotes.clip_row_3.value,
-        'channel': 5
+        "knob": OutboundControlSignals.track_knob_6.value,
+        "primary_button": OutboundNotes.send_a.value,
+        "grid_button": OutboundNotes.clip_row_3.value,
+        "channel": 5,
     },
     308: {
-        'knob': OutboundControlSignals.track_knob_7.value,
-        'primary_button': OutboundNotes.send_b.value,
-        'grid_button': OutboundNotes.clip_row_3.value,
-        'channel': 6
+        "knob": OutboundControlSignals.track_knob_7.value,
+        "primary_button": OutboundNotes.send_b.value,
+        "grid_button": OutboundNotes.clip_row_3.value,
+        "channel": 6,
     },
     309: {
-        'knob': OutboundControlSignals.track_knob_8.value,
-        'primary_button': OutboundNotes.send_c.value,
-        'grid_button': OutboundNotes.clip_row_3.value,
-        'channel': 7
+        "knob": OutboundControlSignals.track_knob_8.value,
+        "primary_button": OutboundNotes.send_c.value,
+        "grid_button": OutboundNotes.clip_row_3.value,
+        "channel": 7,
     },
     401: {
-        'knob': OutboundControlSignals.device_knob_1.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
-        'primary_button': OutboundNotes.clip_track.value,
-        'channel': 0
+        "knob": OutboundControlSignals.device_knob_1.value,
+        "grid_button": OutboundNotes.clip_row_2.value,
+        "primary_button": OutboundNotes.clip_track.value,
+        "channel": 0,
     },
     402: {
-        'knob': OutboundControlSignals.device_knob_2.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
-        'primary_button': OutboundNotes.device_on_off.value,
-        'channel': 1
+        "knob": OutboundControlSignals.device_knob_2.value,
+        "grid_button": OutboundNotes.clip_row_2.value,
+        "primary_button": OutboundNotes.device_on_off.value,
+        "channel": 1,
     },
     403: {
-        'knob': OutboundControlSignals.device_knob_3.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
-        'primary_button': OutboundNotes.arrow_left.value,
-        'channel': 2
+        "knob": OutboundControlSignals.device_knob_3.value,
+        "grid_button": OutboundNotes.clip_row_2.value,
+        "primary_button": OutboundNotes.arrow_left.value,
+        "channel": 2,
     },
     404: {
-        'knob': OutboundControlSignals.device_knob_4.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
-        'primary_button': OutboundNotes.arrow_right.value,
-        'channel': 3
+        "knob": OutboundControlSignals.device_knob_4.value,
+        "grid_button": OutboundNotes.clip_row_2.value,
+        "primary_button": OutboundNotes.arrow_right.value,
+        "channel": 3,
     },
     406: {
-        'knob': OutboundControlSignals.track_knob_1.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
-        'channel': 4
+        "knob": OutboundControlSignals.track_knob_1.value,
+        "grid_button": OutboundNotes.clip_row_2.value,
+        "channel": 4,
     },
     407: {
-        'knob': OutboundControlSignals.track_knob_2.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
-        'channel': 5
+        "knob": OutboundControlSignals.track_knob_2.value,
+        "grid_button": OutboundNotes.clip_row_2.value,
+        "channel": 5,
     },
     408: {
-        'knob': OutboundControlSignals.track_knob_3.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
-        'channel': 6
+        "knob": OutboundControlSignals.track_knob_3.value,
+        "grid_button": OutboundNotes.clip_row_2.value,
+        "channel": 6,
     },
     409: {
-        'knob': OutboundControlSignals.track_knob_4.value,
-        'grid_button': OutboundNotes.clip_row_2.value,
-        'channel': 7
+        "knob": OutboundControlSignals.track_knob_4.value,
+        "grid_button": OutboundNotes.clip_row_2.value,
+        "channel": 7,
     },
-    210: {
-        'fader': OutboundControlSignals.master_level.value,
-        'channel': 0
-    }
+    210: {"fader": OutboundControlSignals.master_level.value, "channel": 0},
     # 191: {
     #     'primary_button': OutboundNotes.clip_row_5.value,
     #     'channel': 0
@@ -422,7 +427,7 @@ GMA3ExecMapToAPC40 = {
 }
 
 APC40MapToGMA3Exec = {
-    InboundControlSignals.track_level.value: { #201
+    InboundControlSignals.track_level.value: {  # 201
         # Channels -> Executors
         0: 201,
         1: 202,
@@ -529,8 +534,6 @@ APC40MapToGMA3Exec = {
     InboundNotes.rec_quant.value: 302,
     InboundNotes.midi_overdub.value: 303,
     InboundNotes.metronome.value: 304,
-    InboundControlSignals.master_level.value: {
-        0: 210
-    },
-    InboundNotes.stop_all_clips.value: 210
+    InboundControlSignals.master_level.value: {0: 210},
+    InboundNotes.stop_all_clips.value: 210,
 }
