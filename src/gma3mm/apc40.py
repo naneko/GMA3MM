@@ -1,6 +1,10 @@
 import logging
-from app import App
+from midi_mapper.app import App
+from midi_mapper.button import ButtonType
+
 import enum
+
+from midi_mapper.fader import FaderType
 
 
 class ClipLaunchLEDState(enum.IntEnum):
@@ -169,7 +173,7 @@ for i in range(8):
 
 app.register_fader(apc40, 210, InboundControlSignals.master_level.value, 0, True)
 
-grid_button = app.ButtonType(app)
+grid_button = ButtonType(app)
 grid_button.set_default_off(ClipLaunchLEDState.off)
 grid_button.set_default_on(ClipLaunchLEDState.green)
 grid_button.set_on("Toggle", ClipLaunchLEDState.yellow)
@@ -177,7 +181,7 @@ grid_button.set_blink_on("Toggle", ClipLaunchLEDState.yellow)
 grid_button.set_blink_off("Toggle", ClipLaunchLEDState.off)
 grid_button.set_on("Off", ClipLaunchLEDState.red)
 
-button = app.ButtonType(app)
+button = ButtonType(app)
 button.set_default_off(0)
 button.set_default_on(1)
 
@@ -223,7 +227,7 @@ for i in range(8):
 app.register_button(apc40, 210, InboundNotes.stop_all_clips.value, 0).set_type(button)
 
 # Knobs
-knob = app.FaderType(app)
+knob = FaderType(app)
 knob.set_off(KnobLEDState.off, 0)
 knob.set_default_inactive_mode(KnobLEDState.volume)
 knob.set_default_active_mode(KnobLEDState.volume)
@@ -293,5 +297,7 @@ app.register_button(apc40, 306, InboundNotes.pan.value, 0).set_type(button)
 app.register_button(apc40, 307, InboundNotes.send_a.value, 0).set_type(button)
 app.register_button(apc40, 308, InboundNotes.send_b.value, 0).set_type(button)
 app.register_button(apc40, 309, InboundNotes.send_c.value, 0).set_type(button)
+
+app.MIDI.send_bytes(b'\xF0\x47\x00\x73\x60\x00\x04\x42\x01\x01\x01\xF7') # Initialize APC40 to mode 3
 
 app.start()
