@@ -1,0 +1,10 @@
+site_name: GrandMA3 MIDI Mapper
+
+plugins:
+  - mkdocstrings:
+      handlers:
+          python:
+            paths: ["src"]
+
+theme:
+  name: readthedocs

@@ -161,11 +161,13 @@ class InboundControlSignals(enum.IntEnum):
     cue_level = 0x2F
 
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 
-app = App("127.0.0.1", "8000", "127.0.0.1", "8001")
+app = App("0.0.0.0", 8000, "0.0.0.0", 8001)
 
-apc40 = app.MIDI.add_device("Akai APC 40", "Akai APC 40")
+apc40 = app.MIDI.add_device("Akai APC40", "Akai APC40")
+
+apc40.set_connect_bytes(b'\xF0\x47\x00\x73\x60\x00\x04\x42\x01\x01\x01\xF7') # Initialize APC40 to mode 2
 
 # Faders
 for i in range(8):
@@ -180,10 +182,21 @@ grid_button.set_on("Toggle", ClipLaunchLEDState.yellow)
 grid_button.set_blink_on("Toggle", ClipLaunchLEDState.yellow)
 grid_button.set_blink_off("Toggle", ClipLaunchLEDState.off)
 grid_button.set_on("Off", ClipLaunchLEDState.red)
+grid_button.set_blink_on("Off", ClipLaunchLEDState.red)
+grid_button.set_blink_off("Off", ClipLaunchLEDState.off)
 
 button = ButtonType(app)
 button.set_default_off(0)
 button.set_default_on(1)
+
+knob_button = ButtonType(app)
+knob_button.set_default_off(0)
+knob_button.set_default_on(1)
+knob_button.set_blink_on("Toggle", 1)
+knob_button.set_blink_off("Toggle", 0)
+knob_button.set_on("Off", ClipLaunchLEDState.red)
+knob_button.set_blink_on("Off", 1)
+knob_button.set_blink_off("Off", 0)
 
 # Select page buttons
 for i in range(8):
@@ -195,32 +208,56 @@ app.register_page_button(apc40, 8, InboundNotes.master.value, 0).set_type(button
 
 # Red buttons
 for i in range(8):
-    app.register_button(apc40, 201 + i, InboundNotes.record_arm.value, i).set_type(
+    if i >= 4:
+        j = i + 1
+    else:
+        j = i
+    app.register_button(apc40, 201 + j, InboundNotes.record_arm.value, i).set_type(
         button
     )
 
 # Blue buttons
 for i in range(8):
-    app.register_button(apc40, 101 + i, InboundNotes.solo.value, i).set_type(button)
+    if i >= 4:
+        j = i + 1
+    else:
+        j = i
+    app.register_button(apc40, 101 + j, InboundNotes.solo.value, i).set_type(button)
 
 # Grid rows starting from second row down
 for i in range(8):
-    app.register_button(apc40, 401 + i, InboundNotes.clip_row_2.value, i).set_type(
+    if i >= 4:
+        j = i + 1
+    else:
+        j = i
+    app.register_button(apc40, 401 + j, InboundNotes.clip_row_2.value, i).set_type(
         grid_button
     )
 
 for i in range(8):
-    app.register_button(apc40, 301 + i, InboundNotes.clip_row_3.value, i).set_type(
+    if i >= 4:
+        j = i + 1
+    else:
+        j = i
+    app.register_button(apc40, 301 + j, InboundNotes.clip_row_3.value, i).set_type(
         grid_button
     )
 
 for i in range(8):
-    app.register_button(apc40, 201 + i, InboundNotes.clip_row_4.value, i).set_type(
+    if i >= 4:
+        j = i + 1
+    else:
+        j = i
+    app.register_button(apc40, 201 + j, InboundNotes.clip_row_4.value, i).set_type(
         grid_button
     )
 
 for i in range(8):
-    app.register_button(apc40, 101 + i, InboundNotes.clip_row_5.value, i).set_type(
+    if i >= 4:
+        j = i + 1
+    else:
+        j = i
+    app.register_button(apc40, 101 + j, InboundNotes.clip_row_5.value, i).set_type(
         grid_button
     )
 
@@ -285,19 +322,17 @@ app.register_fader(
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_8_led, 0)
 
 # Knob Buttons
-app.register_button(apc40, 401, InboundNotes.clip_track.value, 0).set_type(button)
-app.register_button(apc40, 402, InboundNotes.device_on_off.value, 0).set_type(button)
-app.register_button(apc40, 403, InboundNotes.arrow_left.value, 0).set_type(button)
-app.register_button(apc40, 404, InboundNotes.arrow_right.value, 0).set_type(button)
-app.register_button(apc40, 301, InboundNotes.detail_view.value, 0).set_type(button)
-app.register_button(apc40, 302, InboundNotes.rec_quant.value, 0).set_type(button)
-app.register_button(apc40, 303, InboundNotes.midi_overdub.value, 0).set_type(button)
-app.register_button(apc40, 304, InboundNotes.metronome.value, 0).set_type(button)
-app.register_button(apc40, 306, InboundNotes.pan.value, 0).set_type(button)
-app.register_button(apc40, 307, InboundNotes.send_a.value, 0).set_type(button)
-app.register_button(apc40, 308, InboundNotes.send_b.value, 0).set_type(button)
-app.register_button(apc40, 309, InboundNotes.send_c.value, 0).set_type(button)
-
-app.MIDI.send_bytes(b'\xF0\x47\x00\x73\x60\x00\x04\x42\x01\x01\x01\xF7') # Initialize APC40 to mode 3
+app.register_button(apc40, 401, InboundNotes.clip_track.value, 0).set_type(knob_button)
+app.register_button(apc40, 402, InboundNotes.device_on_off.value, 0).set_type(knob_button)
+app.register_button(apc40, 403, InboundNotes.arrow_left.value, 0).set_type(knob_button)
+app.register_button(apc40, 404, InboundNotes.arrow_right.value, 0).set_type(knob_button)
+app.register_button(apc40, 301, InboundNotes.detail_view.value, 0).set_type(knob_button)
+app.register_button(apc40, 302, InboundNotes.rec_quant.value, 0).set_type(knob_button)
+app.register_button(apc40, 303, InboundNotes.midi_overdub.value, 0).set_type(knob_button)
+app.register_button(apc40, 304, InboundNotes.metronome.value, 0).set_type(knob_button)
+app.register_button(apc40, 306, InboundNotes.pan.value, 0).set_type(knob_button)
+app.register_button(apc40, 307, InboundNotes.send_a.value, 0).set_type(knob_button)
+app.register_button(apc40, 308, InboundNotes.send_b.value, 0).set_type(knob_button)
+app.register_button(apc40, 309, InboundNotes.send_c.value, 0).set_type(knob_button)
 
 app.start()

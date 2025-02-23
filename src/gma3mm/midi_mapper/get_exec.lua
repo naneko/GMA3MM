@@ -1,3 +1,4 @@
+CmdIndirect("Page [[page]]")
 local cue_num = GetExecutor([[exec]]).object:Get("cueno")
 if cue_num == "" or cue_num == nil then
     cue_num = "None"
