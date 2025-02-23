@@ -1,7 +1,9 @@
 import enum
 import logging
+import logging.handlers
 import os
 import platform
+import sys
 import threading
 from pathlib import Path
 
@@ -16,6 +18,17 @@ if platform.system() == "Windows":
 
 # TODO: On crash, send error midi state and then restart
 
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+file_handler = logging.handlers.RotatingFileHandler(
+    "gma3mm.log", maxBytes=5*1024*1024, backupCount=2)
+file_handler.setLevel(logging.DEBUG)
+
+logging.basicConfig(
+    format="[%(asctime)s.%(msecs)03d][%(levelname)s][%(name)s] %(message)s",
+    datefmt="%Y-%m-%d,%H:%M:%S",
+    handlers=[console_handler, file_handler],
+)
 
 class App:
     """
@@ -46,7 +59,17 @@ class App:
         self._faders: list[Fader] = []
         self._log.info("Initialized GMA3MM")
 
-    def start(self):
+    @staticmethod
+    def __exception_hook(exception_type, value, traceback):
+        import traceback
+        from notifypy import Notify
+        traceback.print_exception(exception_type, value, traceback)
+        logging.exception("GMA3MM Crashed")
+        notif = Notify()
+        notif.title = "ALERT: GMA3MM Crashed"
+        notif.send()    
+
+    def start(self, exception_hook: bool = False):
         """
         Starts GMA3MM app
         """
@@ -57,6 +80,8 @@ class App:
         threading.Thread(target=ButtonType._blink, args=(self,)).start()
         self.OSC.check_connection()
         self._log.info("GMA3MM Started")
+        if exception_hook:
+            sys.excepthook = self.__exception_hook
 
     def register_fader(
         self, device: Device, executor: int, signal: int, channel: int, latch: bool

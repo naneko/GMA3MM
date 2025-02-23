@@ -335,4 +335,4 @@ app.register_button(apc40, 307, InboundNotes.send_a.value, 0).set_type(knob_butt
 app.register_button(apc40, 308, InboundNotes.send_b.value, 0).set_type(knob_button)
 app.register_button(apc40, 309, InboundNotes.send_c.value, 0).set_type(knob_button)
 
-app.start()
+app.start(exception_hook=True)
