@@ -34,15 +34,18 @@ class MIDIHandler:
         :param output_device_name: Output device name
         :param input_device_name: Input device name
         """
-        self._log.debug("Adding MIDI device | Input Name: " + input_device_name + " | Output Name: " + output_device_name)
-        new_device = Device(self._app, input_device_name, output_device_name)
+        #TODO: If multiple of same device name, ask/wait for button to be pressed on desired device
+        input_names = [d for d in mido.get_input_names() if input_device_name in d]
+        output_names = [d for d in mido.get_output_names() if output_device_name in d]
+        self._log.debug("Adding MIDI device | Input Name: " + input_names[0] + " | Output Name: " + output_names[0])
+        new_device = Device(self._app, input_names[0], output_names[0])
         with self._lock:
             self._devices.append(new_device)
-            self._midi_routes[input_device_name] = {}
+            self._midi_routes[input_names[0]] = {}
             for message_type in MIDIMessageTypes:
-                self._midi_routes[input_device_name][message_type.value] = {}
+                self._midi_routes[input_names[0]][message_type.value] = {}
                 for i in range(0, 16):
-                    self._midi_routes[input_device_name][message_type.value][i] = {}
+                    self._midi_routes[input_names[0]][message_type.value][i] = {}
 
             return new_device
     
@@ -189,7 +192,8 @@ class Device:
                         self._log.info(f"Connected to MIDI device | Input Name: {self._input_name} | Output Name: {self._output_name}")
                         self._set_page(self._page) # Initialize the page
                         break
-                    except OSError:
+                    except OSError as e:
+                        self._log.debug(e)
                         if self._input:
                             self._input.close()
                         if self._output:

@@ -161,9 +161,10 @@ class InboundControlSignals(enum.IntEnum):
     cue_level = 0x2F
 
 
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
+#TODO: Allow shift button to be assigned that will flash relevant knobs without executing the function
 
-app = App("0.0.0.0", 8000, "0.0.0.0", 8001)
+app = App("10.1.1.100", 8000, "10.1.1.100", 8001)
 
 apc40 = app.MIDI.add_device("Akai APC40", "Akai APC40")
 

@@ -15,6 +15,7 @@ from midi_mapper.osc_handler import OSCHandler
 
 if platform.system() == "Windows":
     os.add_dll_directory(Path(__file__).parent)
+    mido.set_backend('mido.backends.portmidi')
 
 # TODO: On crash, send error midi state and then restart
 
@@ -28,6 +29,7 @@ logging.basicConfig(
     format="[%(asctime)s.%(msecs)03d][%(levelname)s][%(name)s] %(message)s",
     datefmt="%Y-%m-%d,%H:%M:%S",
     handlers=[console_handler, file_handler],
+    level=logging.DEBUG,
 )
 
 class App:
