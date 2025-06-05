@@ -41,7 +41,7 @@ class OSCHandler:
         """
         def wrapper(func):
             with self._lock:
-                self._log.debug(f"Adding OSC route to {func.__name__} | Address: {address}")
+                self._log.fine(f"Adding OSC route to {func.__name__} | Address: {address}")
                 self._dispatcher.map(address, func)
                 return func
 
@@ -53,7 +53,7 @@ class OSCHandler:
         :param address: OSC address
         :param args: OSC arguments
         """
-        self._log.debug(f"OSC message received | Address: {address} | Args: {args}")
+        self._log.fine(f"OSC message received | Address: {address} | Args: {args}")
 
     def add_route(self, address: str, func: callable):
         """
@@ -62,7 +62,7 @@ class OSCHandler:
         :param func: Function to execute
         """
         with self._lock:
-            self._log.debug(f"Adding OSC route to {func.__name__} | Address: {address}")
+            self._log.fine(f"Adding OSC route to {func.__name__} | Address: {address}")
             self._dispatcher.map(address, func)
 
     def request_update_all(self, buttons: List['Button'], faders: List['Fader']):
@@ -131,9 +131,9 @@ class OSCHandler:
         :param message: OSC message
         """
         if not self._connected:
-            self._log.debug(f"OSC client not connected | Address: {address} | Message: {message}")
+            self._log.fine(f"OSC client not connected | Address: {address} | Message: {message}")
             self.check_connection()
-        self._log.debug(f"Sending OSC message | Address: {address} | Message: {message}")
+        self._log.fine(f"Sending OSC message | Address: {address} | Message: {message}")
         self._client.send_message(address, message)
 
     def send_no_check(self, address: str, message: str):
@@ -143,5 +143,5 @@ class OSCHandler:
         :param address: OSC address
         :param message: OSC message
         """
-        self._log.debug(f"Sending OSC message | Address: {address} | Message: {message}")
+        self._log.fine(f"Sending OSC message | Address: {address} | Message: {message}")
         self._client.send_message(address, message)

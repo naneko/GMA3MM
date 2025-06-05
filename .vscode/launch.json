@@ -12,6 +12,13 @@
             "console": "integratedTerminal"
         },
         {
+            "name": "Run APC40/APC20",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/src/gma3mm/apc40n20.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Run Launch Control XL",
             "type": "debugpy",
             "request": "launch",

@@ -366,11 +366,11 @@ class Fader(FaderType):
         fader_value = int(remap(fader_value, 0, 100, 1, 127))
         self._app.MIDI.send_control_change(self._device, MIDIMessageTypes.control_change, self._channel, self._signal, fader_value)
         self._current_fader_type = fader_type
-        if fader_type:
-            self._update_mode(self._app, self, button_type, self._state)
-        else:
-            self._update_mode(self._app, self, button_type, 'off')
-            self._state = 'off'
+        # if not fader_type:
+        # #     self._update_mode(self._app, self, button_type, self._state)
+        # # else:
+        #     self._update_mode(self._app, self, button_type, 'off')
+        #     self._state = 'off'
 
     def set_feedback_config(self, signal: int, channel: int):
         self._feedback_config_signal = signal

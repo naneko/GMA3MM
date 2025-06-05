@@ -24,8 +24,9 @@ class MIDIHandler:
         self._midi_routes: dict[str, MIDIMessageTypes, int, int, callable] = {}
         self._lock = threading.Lock()
 
-        self._log.info("Connected output MIDI devices: " + ", ".join(mido.get_output_names()))
-        self._log.info("Connected input MIDI devices: " + ", ".join(mido.get_input_names()))
+        with self._lock:
+            self._log.info("Connected output MIDI devices: " + ", ".join(mido.get_output_names()))
+            self._log.info("Connected input MIDI devices: " + ", ".join(mido.get_input_names()))
 
     def add_device(self, input_device_name: str, output_device_name: str):
         """
@@ -35,8 +36,9 @@ class MIDIHandler:
         :param input_device_name: Input device name
         """
         #TODO: If multiple of same device name, ask/wait for button to be pressed on desired device
-        input_names = [d for d in mido.get_input_names() if input_device_name in d]
-        output_names = [d for d in mido.get_output_names() if output_device_name in d]
+        with self._lock:
+            input_names = [d for d in mido.get_input_names() if input_device_name in d]
+            output_names = [d for d in mido.get_output_names() if output_device_name in d]
         self._log.debug("Adding MIDI device | Input Name: " + input_names[0] + " | Output Name: " + output_names[0])
         new_device = Device(self._app, input_names[0], output_names[0])
         with self._lock:
@@ -86,7 +88,7 @@ class MIDIHandler:
                 for msg_type in msg_types:
                     for i in range(start_channel, end_channel):
                         for signal in signals:
-                            self._log.debug(f"Adding MIDI route to {func.__name__} | Device: {device._input_name} | Message Type: {msg_type} | Channel: {i} | Signal: {signal}")
+                            self._log.fine(f"Adding MIDI route to {func.__name__} | Device: {device._input_name} | Message Type: {msg_type} | Channel: {i} | Signal: {signal}")
                             self._midi_routes[device._input_name][msg_type][i][signal] = func
 
         return wrapper
@@ -102,24 +104,36 @@ class MIDIHandler:
         """
         # TODO: Check for overwrite
         with self._lock:
-            self._log.debug(f"Adding MIDI route to {func.__name__} | Device: {device._input_name} | Message Type: {msg_type} | Channel: {channel} | Signal: {signal}")
+            self._log.fine(f"Adding MIDI route to {func.__name__} | Device: {device._input_name} | Message Type: {msg_type} | Channel: {channel} | Signal: {signal}")
             self._midi_routes[device._input_name][msg_type.value][channel][signal] = func
 
     def send_note(self, device: 'Device', msg_type: 'MIDIMessageTypes', channel: int, note: int, value: int):
-        self._log.debug(f"Sending MIDI note | Device: {device._input_name} | Message Type: {msg_type} | Channel: {channel} | Note: {note} | Value: {value}")
-        device._output.send(mido.Message(msg_type.value, channel=channel, note=note, velocity=value))
+        if device._connected:
+            self._log.fine(f"Sending MIDI note | Device: {device._output_name} | Message Type: {msg_type} | Channel: {channel} | Note: {note} | Value: {value}")
+            device._output.send(mido.Message(msg_type.value, channel=channel, note=note, velocity=value))
+        else:
+            self._log.debug(f"Cannot send MIDI note | Device: {device._output_name} is not connected | Message Type: {msg_type} | Channel: {channel} | Note: {note} | Value: {value}")
 
     def send_control_change(self, device: 'Device', msg_type: 'MIDIMessageTypes', channel: int, control: int, value: int):
-        self._log.debug(f"Sending MIDI control change | Device: {device._input_name} | Message Type: {msg_type} | Channel: {channel} | Control: {control} | Value: {value}")
-        device._output.send(mido.Message(msg_type.value, channel=channel, control=control, value=value))
+        if device._connected:
+            self._log.fine(f"Sending MIDI control change | Device: {device._output_name} | Message Type: {msg_type} | Channel: {channel} | Control: {control} | Value: {value}")
+            device._output.send(mido.Message(msg_type.value, channel=channel, control=control, value=value))
+        else:
+            self._log.debug(f"Cannot send MIDI control change | Device: {device._output_name} is not connected | Message Type: {msg_type} | Channel: {channel} | Control: {control} | Value: {value}")
 
     def send_sysex(self, device: 'Device', sysex: list[bytes]):
-        self._log.debug(f"Sending MIDI sysex | Device: {device._input_name} | Sysex: {sysex}")
-        device._output.send(mido.Message('sysex', data=sysex))
+        if device._connected:
+            self._log.fine(f"Sending MIDI sysex | Device: {device._input_name} | Sysex: {sysex}")
+            device._output.send(mido.Message('sysex', data=sysex))
+        else:
+            self._log.debug(f"Cannot send MIDI sysex | Device: {device._input_name} is not connected | Sysex: {sysex}")
 
     def send_bytes(self, device: 'Device', bytes: bytes):
-        self._log.debug(f"Sending MIDI bytes | Device: {device._input_name} | Bytes: {bytes}")
-        device._output.send(mido.Message.from_bytes(bytes))
+        if device._connected:
+            self._log.fine(f"Sending MIDI bytes | Device: {device._input_name} | Bytes: {bytes}")
+            device._output.send(mido.Message.from_bytes(bytes))
+        else:
+            self._log.debug(f"Cannot send MIDI bytes | Device: {device._input_name} is not connected | Bytes: {bytes}")
 
     def start(self):
         """
@@ -177,15 +191,16 @@ class Device:
 
     def _connect(self):
 
-        self._app._log.debug(f"Starting MIDI connection process | Input Name: {self._input_name} | Output Name: {self._output_name}")
+        self._app._log.fine(f"Starting MIDI connection process | Input Name: {self._input_name} | Output Name: {self._output_name}")
 
         def connect_helper():
             with self._connecting:
                 while True:
                     try:
                         self._app._log.debug(f"Connecting to MIDI device | Input Name: {self._input_name} | Output Name: {self._output_name}")
-                        self._input = mido.open_input(self._input_name)
-                        self._output = mido.open_output(self._output_name)
+                        with self._app.MIDI._lock:
+                            self._input = mido.open_input(self._input_name)
+                            self._output = mido.open_output(self._output_name)
                         if self._connect_bytes:
                             self._output.send(mido.Message.from_bytes(self._connect_bytes))
                         self._connected = True
@@ -194,36 +209,41 @@ class Device:
                         break
                     except OSError as e:
                         self._log.debug(e)
-                        if self._input:
-                            self._input.close()
-                        if self._output:
-                            self._output.close()
+                        with self._app.MIDI._lock:
+                            if self._input:
+                                self._input.close()
+                            if self._output:
+                                self._output.close()
                         self._input = None
                         self._output = None
                         self._connected = False
-                        self._log.error(f"Could not connect to MIDI device. Trying again in 5 seconds... | Input Name: {self._input_name} | Output Name: {self._output_name}")
+                        self._log.error(f"Could not connect to MIDI device. Trying again in 5 seconds... | Input Name: {self._input_name} | Output Name: {self._output_name}\n{e}")
                     sleep(5)
 
             
         if not self._connecting.locked():
             threading.Thread(target=connect_helper).start()
+        else:
+            with self._connecting:
+                return
 
     def _set_page(self, page: int):
         with self._lock:
             self._log.debug(f"Setting page | Device: {self._input_name} | Page: {page}")
             self._page = page
+            for fader in self._app._faders:
+                if fader._device == self:
+                    fader._current_fader_type = ''
+                    fader._update_mode(self._app, fader, None, 'off')
+                    fader._request_update()
             for button in self._app._buttons:
                 if button._device == self and button._select_page == page:
                     button._update_feedback(self._app, button, button._current_button_type, 'on')
                 elif button._device == self and button._select_page != page and button._select_page != None:
                     button._update_feedback(self._app, button, button._current_button_type, 'off')
-                else:
+                elif button._device == self:
                     button._update_feedback(self._app, button, button._current_button_type, 'off')
                     button._request_update()
-            for fader in self._app._faders:
-                fader._current_fader_type = ''
-                fader._update_mode(self._app, fader, None, 'off')
-                fader._request_update()
 
     def set_connect_bytes(self, bytes: bytes):
         self._connect_bytes = bytes

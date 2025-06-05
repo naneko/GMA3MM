@@ -389,7 +389,7 @@ class Button(ButtonType):
             self._device._set_page(self._select_page)
     
     def __note_off(self, msg: mido.Message):
-        self._log.debug(f"Button released | Executor: {self._executor} | Page: {self._select_page} | Current Button Type: {self._current_button_type} | {msg}")
+        self._log.fine(f"Button released | Executor: {self._executor} | Page: {self._select_page} | Current Button Type: {self._current_button_type} | {msg}")
         if self._executor:
             if not self._current_button_type:
                 return

@@ -8,6 +8,7 @@ import threading
 from pathlib import Path
 
 import mido
+from midi_mapper.tools import addLoggingLevel
 from midi_mapper.button import Button, ButtonType
 from midi_mapper.fader import Fader
 from midi_mapper.midi_handler import Device, MIDIHandler
@@ -18,6 +19,8 @@ if platform.system() == "Windows":
     mido.set_backend('mido.backends.portmidi')
 
 # TODO: On crash, send error midi state and then restart
+
+addLoggingLevel('FINE', logging.DEBUG - 5)
 
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
@@ -100,7 +103,7 @@ class App:
         Returns:
             Fader: Newly created fader object
         """
-        self._log.debug(
+        self._log.fine(
             f"Registering fader | Device: {device._input_name} | Executor: {executor} | Signal: {signal} | Channel: {channel} | Latch: {latch}"
         )
         fader = Fader(self, device, signal, channel, executor, latch=latch)
@@ -121,7 +124,7 @@ class App:
         Returns:
             Button: Newly created button object
         """
-        self._log.debug(
+        self._log.fine(
             f"Registering button | Device: {device._input_name} | Executor: {executor} | Signal: {signal} | Channel: {channel}"
         )
         button = Button(self, device, signal, channel, executor=executor)
@@ -144,7 +147,7 @@ class App:
         Returns:
             Button: Newly created button object
         """
-        self._log.debug(
+        self._log.fine(
             f"Registering page button | Device: {device._input_name} | Page: {page} | Signal: {signal} | Channel: {channel}"
         )
         button = Button(self, device, signal, channel, select_page=page)

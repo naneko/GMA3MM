@@ -167,8 +167,10 @@ class InboundControlSignals(enum.IntEnum):
 app = App("10.1.1.100", 8000, "10.1.1.100", 8001)
 
 apc40 = app.MIDI.add_device("Akai APC40", "Akai APC40")
+apc20 = app.MIDI.add_device('Akai APC20', 'Akai APC20')
 
 apc40.set_connect_bytes(b'\xF0\x47\x00\x73\x60\x00\x04\x42\x01\x01\x01\xF7') # Initialize APC40 to mode 2
+apc20.set_connect_bytes(b'\xF0\x47\x7F\x7B\x60\x00\x04\x41\x08\x02\x01\xF7')
 
 # Faders
 for i in range(4):
@@ -177,7 +179,14 @@ for i in range(4):
 for i in range(4):
     app.register_fader(apc40, 206 + i, InboundControlSignals.track_level.value, i+4, True)
 
+for i in range(4):
+    app.register_fader(apc20, 201 + i, InboundControlSignals.track_level.value, i, True)
+
+for i in range(4):
+    app.register_fader(apc20, 206 + i, InboundControlSignals.track_level.value, i+4, True)
+
 app.register_fader(apc40, 210, InboundControlSignals.master_level.value, 0, True)
+app.register_fader(apc20, 210, InboundControlSignals.master_level.value, 0, True)
 
 grid_button = ButtonType(app)
 grid_button.set_default_off(ClipLaunchLEDState.off)
@@ -210,6 +219,13 @@ for i in range(8):
 
 app.register_page_button(apc40, 8, InboundNotes.master.value, 0).set_type(button)
 
+for i in range(8):
+    app.register_page_button(apc20, i, InboundNotes.track_selection.value, i).set_type(
+        button
+    )
+
+app.register_page_button(apc20, 8, InboundNotes.master.value, 0).set_type(button)
+
 # Red buttons
 for i in range(8):
     if i >= 4:
@@ -217,6 +233,15 @@ for i in range(8):
     else:
         j = i
     app.register_button(apc40, 201 + j, InboundNotes.record_arm.value, i).set_type(
+        button
+    )
+
+for i in range(8):
+    if i >= 4:
+        j = i + 1
+    else:
+        j = i
+    app.register_button(apc20, 201 + j, InboundNotes.record_arm.value, i).set_type(
         button
     )
 
@@ -228,6 +253,13 @@ for i in range(8):
         j = i
     app.register_button(apc40, 101 + j, InboundNotes.solo.value, i).set_type(button)
 
+for i in range(8):
+    if i >= 4:
+        j = i + 1
+    else:
+        j = i
+    app.register_button(apc20, 101 + j, InboundNotes.solo.value, i).set_type(button)
+
 # Grid rows starting from second row down
 for i in range(8):
     if i >= 4:
@@ -235,6 +267,15 @@ for i in range(8):
     else:
         j = i
     app.register_button(apc40, 401 + j, InboundNotes.clip_row_2.value, i).set_type(
+        grid_button
+    )
+
+for i in range(8):
+    if i >= 4:
+        j = i + 1
+    else:
+        j = i
+    app.register_button(apc20, 401 + j, InboundNotes.clip_row_2.value, i).set_type(
         grid_button
     )
 
@@ -252,6 +293,15 @@ for i in range(8):
         j = i + 1
     else:
         j = i
+    app.register_button(apc20, 301 + j, InboundNotes.clip_row_3.value, i).set_type(
+        grid_button
+    )
+
+for i in range(8):
+    if i >= 4:
+        j = i + 1
+    else:
+        j = i
     app.register_button(apc40, 201 + j, InboundNotes.clip_row_4.value, i).set_type(
         grid_button
     )
@@ -261,7 +311,25 @@ for i in range(8):
         j = i + 1
     else:
         j = i
+    app.register_button(apc20, 201 + j, InboundNotes.clip_row_4.value, i).set_type(
+        grid_button
+    )
+
+for i in range(8):
+    if i >= 4:
+        j = i + 1
+    else:
+        j = i
     app.register_button(apc40, 101 + j, InboundNotes.clip_row_5.value, i).set_type(
+        grid_button
+    )
+
+for i in range(8):
+    if i >= 4:
+        j = i + 1
+    else:
+        j = i
+    app.register_button(apc20, 101 + j, InboundNotes.clip_row_5.value, i).set_type(
         grid_button
     )
 
