@@ -25,6 +25,8 @@ def remap(old_val, old_min, old_max, new_min, new_max) -> float:
 def request_update(control: Union['Button', 'Fader']):
     sleep(0.1)  # Delay for MA to process the button press
     script_dir = Path(__file__).parent
+    if control._executor is None or control._device._page is None:
+        return
     with open(script_dir / "get_exec.lua", "r") as f:
         lua = f.readlines()
         control._app.OSC.send(

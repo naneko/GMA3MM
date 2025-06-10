@@ -1,4 +1,5 @@
 import logging
+import platform
 from midi_mapper.app import App
 from midi_mapper.button import ButtonType
 
@@ -164,7 +165,10 @@ class InboundControlSignals(enum.IntEnum):
 # logging.basicConfig(level=logging.INFO)
 #TODO: Allow shift button to be assigned that will flash relevant knobs without executing the function
 
-app = App("10.1.1.100", 8000, "10.1.1.100", 8001)
+if platform.system() == "Windows":
+    app = App("10.1.1.100", 8000, "10.1.1.100", 8001)
+else:
+    app = App("127.0.0.1", 8000, "127.0.0.1", 8001)
 
 apc40 = app.MIDI.add_device("Akai APC40", "Akai APC40")
 apc20 = app.MIDI.add_device('Akai APC20', 'Akai APC20')
