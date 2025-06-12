@@ -328,11 +328,13 @@ class Fader(FaderType):
     def __trigger(self, msg):
         # Encoder layer override default functionality
         if self._encoder_layer_number is not None and self._app._encoder_layer:
-            self._update_mode(self.app, self, None, 'super_highlight')
+            print(f"C: {self._encoder_value_cache} | V: {msg.value}")
+            # self._update_mode(self._app, self, None, 'super_highlight')
             if msg.value == 127 or msg.value > self._encoder_value_cache:
                 encoder_plus(self._app, self._encoder_layer_number)
             elif msg.value == 0 or msg.value < self._encoder_value_cache:
                 encoder_minus(self._app, self._encoder_layer_number)
+            self._encoder_value_cache = msg.value
             return
 
         value = remap(msg.value, 0, 127, 0, 100)
@@ -373,10 +375,8 @@ class Fader(FaderType):
         Fader._last_value_change = time.time()
         
         # To avoid bogging down MA, wait to update buttons and faders until fader values have stopped updating for 0.25s
-        delayed_update(self._app, self._executor, Fader._last_value_change)
-
         if not hasattr(self, '_update_thread') or not self._update_thread.is_alive() and not self._latch:
-            self._update_thread = threading.Thread(target=delayed_update)
+            self._update_thread = threading.Thread(target=delayed_update, args=(self._app, self._executor, Fader._last_value_change))
             self._update_thread.start()
     
     def _request_update(self):

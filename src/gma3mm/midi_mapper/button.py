@@ -342,7 +342,7 @@ class Button(ButtonType):
         Raises:
             ValueError: Button can only have one purpose: executor, select_page, or toggle_encoder_layer
         """
-        if (executor is not None) + (select_page is not None) + (toggle_encoder_layer is not None) != 1:
+        if (executor is not None) + (select_page is not None) + (toggle_encoder_layer is not False) != 1:
             raise ValueError("Button can only have one purpose: executor, select_page, or toggle_encoder_layer")
 
         super().__init__(app)
@@ -394,10 +394,10 @@ class Button(ButtonType):
             self._app._encoder_layer = not self._app._encoder_layer
             if self._app._encoder_layer:
                 for fader in self._app.get_encoders():
-                    fader._update_mode(fader._app, fader, None, 'highlight')
+                    # fader._update_mode(fader._app, fader, None, 'highlight')
                     fader._encoder_value_cache = 64
                     fader._app.MIDI.send_control_change(fader._device, MIDIMessageTypes.control_change, fader._channel, fader._signal, 64)
-                    fader._update_mode(fader._app, self, None, 'super_highlight')
+                    fader._update_mode(fader._app, fader, None, 'super_highlight')
             else:
                 for fader in self._app.get_encoders():
                     fader._update_mode(fader._app, fader, fader._current_fader_type, 'highlight')
@@ -415,10 +415,8 @@ class Button(ButtonType):
             Button._last_value_change = time.time()
             
             # To avoid bogging down MA, wait to update buttons and faders until fader values have stopped updating for 0.25s
-            delayed_update(self._app, self._executor, Button._last_value_change)
-
             if not hasattr(self, '_update_thread') or not self._update_thread.is_alive():
-                self._update_thread = threading.Thread(target=delayed_update)
+                self._update_thread = threading.Thread(target=delayed_update, args=(self._app, self._executor, Button._last_value_change))
                 self._update_thread.start()
 
     def __gma_update(self, address: str, *args):

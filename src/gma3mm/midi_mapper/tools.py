@@ -4,8 +4,6 @@ from time import sleep
 import time
 from typing import TYPE_CHECKING, Union
 
-from gma3mm.midi_mapper.button import ButtonType
-
 if TYPE_CHECKING:
     from midi_mapper.button import Button
     from midi_mapper.fader import Fader
@@ -82,7 +80,7 @@ def delayed_update(app: 'App', executor: int, last_value_change: float):
             associated_buttons = app.get_buttons(executor)
             for button in associated_buttons:
                 button._request_update()
-            for button in ButtonType.blinking:
+            for button in app._buttons[0].blinking:
                 button._request_update()
             associated_faders = app.get_faders(executor)
             for fader in associated_faders:
