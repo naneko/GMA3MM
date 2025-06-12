@@ -328,7 +328,6 @@ class Fader(FaderType):
     def __trigger(self, msg):
         # Encoder layer override default functionality
         if self._encoder_layer_number is not None and self._app._encoder_layer:
-            print(f"C: {self._encoder_value_cache} | V: {msg.value}")
             # self._update_mode(self._app, self, None, 'super_highlight')
             if msg.value == 127 or msg.value > self._encoder_value_cache:
                 encoder_plus(self._app, self._encoder_layer_number)
