@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Literal, TypedDict
 import uuid
 if TYPE_CHECKING:
     from midi_mapper.app import App, ButtonTypes
-from midi_mapper.tools import remap, request_update
+from midi_mapper.tools import delayed_update, encoder_minus, encoder_plus, remap, request_update
 from midi_mapper.midi_handler import Device, MIDIMessageTypes
 
 class FaderType:
@@ -33,7 +33,7 @@ class FaderType:
         self._active_mode: dict['ButtonTypes', int] = {} # Active mode for specific gma encoder types (based on gma button type)
         self._highlight_mode: dict['ButtonTypes', int] = {} # Highlight mode for specific gma encoder types (based on gma button type)
         self._highlight_value: dict['ButtonTypes', int] = {} # Highlight value for specific gma encoder types (based on gma button type)
-        self._state: Literal['off', 'inactive', 'active', 'highlight'] = 'off'
+        self._state: Literal['off', 'inactive', 'active'] = 'off'
 
     def set_off(self, mode_value: int, value: int) -> 'FaderType':
         """Set the off mode and value for the fader's feedback
@@ -179,7 +179,7 @@ class FaderType:
             return self._default_highlight_mode, self._default_highlight_value
         
     @classmethod
-    def _update_mode(cls, app: 'App', fader: 'Fader', gma_type: 'ButtonTypes', state: Literal['off', 'inactive', 'active', 'highlight']):
+    def _update_mode(cls, app: 'App', fader: 'Fader', gma_type: 'ButtonTypes', state: Literal['off', 'inactive', 'active', 'highlight', 'super_highlight']) -> None:
         match state:
             case 'off':
                 fader._state = 'off'
@@ -261,11 +261,36 @@ class FaderType:
                         )
 
                 threading.Thread(target=highlight_flash).start()
+            case 'super_highlight':
+                app.MIDI.send_control_change(
+                    fader._device,
+                    MIDIMessageTypes.control_change,
+                    fader._feedback_config_channel,
+                    fader._feedback_config_signal,
+                    fader.get_highlight(gma_type)[0]
+                )
+                app.MIDI.send_control_change(
+                    fader._device,
+                    MIDIMessageTypes.control_change,
+                    fader._channel,
+                    fader._signal,
+                    fader.get_highlight(gma_type)[1]
+                )
 
 class Fader(FaderType):
     _last_value_change: float = 0
 
-    def __init__(self, app: 'App', device: Device, signal: int, channel: int, executor: int, latch: bool = True):
+    def __init__(self, app: 'App', device: Device, signal: int, channel: int, executor: int, latch: bool = True, encoder_layer_number: int = None):
+        """
+        Args:
+            app (App): GMA3MM App instance
+            device (Device): MIDI Device to register fader to
+            signal (int): MIDI control signal to listen for
+            channel (int): MIDI channel to listen on
+            executor (int): GMA3 Executor to control
+            latch (bool): On page change, hold the value that the fader controls until the fader equals that value. This will prevent the fader from jumping to the new value when the page is changed.
+            encoder_layer_number (int): Only works on knobs. When encoder layer is toggled, the encoder this knob controls.
+        """
         super().__init__(app)
         self._app: 'App' = app
         self._log: logging.Logger = logging.getLogger(self.__class__.__name__)
@@ -281,6 +306,8 @@ class Fader(FaderType):
         self._old_value: int = -1
         self._value: int = -1
         self._gma_value: int = -1
+        self._encoder_layer_number: int = encoder_layer_number
+        self._encoder_value_cache: int = 64
 
         self._app.OSC.add_route(f'/{self._uid}', self.__gma_update)
         self._app.MIDI.add_route(device, MIDIMessageTypes.control_change, channel, signal, self.__trigger)
@@ -299,6 +326,15 @@ class Fader(FaderType):
         return self
 
     def __trigger(self, msg):
+        # Encoder layer override default functionality
+        if self._encoder_layer_number is not None and self._app._encoder_layer:
+            self._update_mode(self.app, self, None, 'super_highlight')
+            if msg.value == 127 or msg.value > self._encoder_value_cache:
+                encoder_plus(self._app, self._encoder_layer_number)
+            elif msg.value == 0 or msg.value < self._encoder_value_cache:
+                encoder_minus(self._app, self._encoder_layer_number)
+            return
+
         value = remap(msg.value, 0, 127, 0, 100)
         self._value = value
 
@@ -337,18 +373,7 @@ class Fader(FaderType):
         Fader._last_value_change = time.time()
         
         # To avoid bogging down MA, wait to update buttons and faders until fader values have stopped updating for 0.25s
-        def delayed_update():
-            while True:
-                current_time = time.time()
-                if current_time - Fader._last_value_change >= 0.25:
-                    associated_buttons = self._app.get_buttons(self._executor)
-                    for button in associated_buttons:
-                        button._request_update()
-                    associated_faders = self._app.get_faders(self._executor)
-                    for fader in associated_faders:
-                        fader._request_update()
-                    break
-                sleep(0.05)
+        delayed_update(self._app, self._executor, Fader._last_value_change)
 
         if not hasattr(self, '_update_thread') or not self._update_thread.is_alive() and not self._latch:
             self._update_thread = threading.Thread(target=delayed_update)

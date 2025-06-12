@@ -63,6 +63,7 @@ class App:
         self._buttons: list[Button] = []
         self._encoders: list[Fader] = []
         self._faders: list[Fader] = []
+        self._encoder_layer: bool = False
         self._log.info("Initialized GMA3MM")
 
     @staticmethod
@@ -90,7 +91,7 @@ class App:
             sys.excepthook = self.__exception_hook
 
     def register_fader(
-        self, device: Device, executor: int, signal: int, channel: int, latch: bool
+        self, device: Device, executor: int, signal: int, channel: int, latch: bool, encoder_layer_number: int | None = None
     ) -> Fader:
         """Register a MIDI fader
 
@@ -107,7 +108,7 @@ class App:
         self._log.fine(
             f"Registering fader | Device: {device._input_name} | Executor: {executor} | Signal: {signal} | Channel: {channel} | Latch: {latch}"
         )
-        fader = Fader(self, device, signal, channel, executor, latch=latch)
+        fader = Fader(self, device, signal, channel, executor, latch=latch, encoder_layer_number=encoder_layer_number)
         self._faders.append(fader)
         return fader
 
@@ -155,6 +156,29 @@ class App:
         self._buttons.append(button)
         return button
 
+    def register_encoder_layer_button(
+        self, device: Device, signal: int, channel: int
+    ) -> Button:
+        """Register a MIDI encoder layer button
+
+        This will change the executor page the MIDI device is controlling
+
+        Args:
+            device (Device): MIDI Device to register button to
+            page (int): Page to change to
+            signal (int): MIDI note to listen for
+            channel (int): MIDI channel to listen on
+
+        Returns:
+            Button: Newly created button object
+        """
+        self._log.fine(
+            f"Registering encoder layer button | Device: {device._input_name} | Signal: {signal} | Channel: {channel}"
+        )
+        button = Button(self, device, signal, channel, toggle_encoder_layer=True)
+        self._buttons.append(button)
+        return button
+    
     def get_faders(self, executor: int) -> list[Fader]:
         """Get all faders for a specific executor
 
@@ -165,6 +189,15 @@ class App:
             list[Fader]: List of fader objects
         """
         return [f for f in self._faders if f._executor == executor]
+    
+    def get_encoders(self) -> list[Fader]:
+        """
+        Get all encoders when encoder layer is active
+
+        Returns:
+            list[Fader]: List of encoder objects
+        """
+        return [f for f in self._faders if f._encoder_layer_number is not None]
 
     def get_buttons(self, executor: int) -> list[Button]:
         """Get all buttons for a specific executor

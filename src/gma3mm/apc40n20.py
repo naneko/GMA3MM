@@ -373,25 +373,25 @@ app.register_fader(
 ).set_type(knob).set_feedback_config(OutboundControlSignals.device_knob_8_led, 0)
 
 app.register_fader(
-    apc40, 406, InboundControlSignals.track_knob_1.value, 0, False
+    apc40, 406, InboundControlSignals.track_knob_1.value, 0, False, 1
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_1_led, 0)
 app.register_fader(
-    apc40, 407, InboundControlSignals.track_knob_2.value, 0, False
+    apc40, 407, InboundControlSignals.track_knob_2.value, 0, False, 2
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_2_led, 0)
 app.register_fader(
-    apc40, 408, InboundControlSignals.track_knob_3.value, 0, False
+    apc40, 408, InboundControlSignals.track_knob_3.value, 0, False, 3
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_3_led, 0)
 app.register_fader(
-    apc40, 409, InboundControlSignals.track_knob_4.value, 0, False
+    apc40, 409, InboundControlSignals.track_knob_4.value, 0, False, 4
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_4_led, 0)
 app.register_fader(
     apc40, 306, InboundControlSignals.track_knob_5.value, 0, False
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_5_led, 0)
 app.register_fader(
-    apc40, 307, InboundControlSignals.track_knob_6.value, 0, False
+    apc40, 307, InboundControlSignals.track_knob_6.value, 0, False, 5
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_6_led, 0)
 app.register_fader(
-    apc40, 308, InboundControlSignals.track_knob_7.value, 0, False
+    apc40, 308, InboundControlSignals.track_knob_7.value, 0, False, 6
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_7_led, 0)
 app.register_fader(
     apc40, 309, InboundControlSignals.track_knob_8.value, 0, False
@@ -410,5 +410,7 @@ app.register_button(apc40, 306, InboundNotes.pan.value, 0).set_type(knob_button)
 app.register_button(apc40, 307, InboundNotes.send_a.value, 0).set_type(knob_button)
 app.register_button(apc40, 308, InboundNotes.send_b.value, 0).set_type(knob_button)
 app.register_button(apc40, 309, InboundNotes.send_c.value, 0).set_type(knob_button)
+
+app.register_encoder_layer_button(apc40, InboundNotes.shift.value, 0)
 
 app.start(exception_hook=True)

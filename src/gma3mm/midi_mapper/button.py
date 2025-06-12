@@ -9,7 +9,7 @@ import uuid
 import mido
 import logging
 
-from midi_mapper.tools import request_update
+from midi_mapper.tools import delayed_update, request_update
 
 if TYPE_CHECKING:
     from midi_mapper.app import App, ButtonTypes
@@ -328,7 +328,7 @@ class Button(ButtonType):
 
     _last_value_change: float = 0
 
-    def __init__(self, app: 'App', device: Device, signal: int, channel: int, executor: int = None, select_page: int = None):
+    def __init__(self, app: 'App', device: Device, signal: int, channel: int, executor: int = None, select_page: int = None, toggle_encoder_layer: bool = False):
         """
         Args:
             app (App): GMA3MM App instance
@@ -337,12 +337,13 @@ class Button(ButtonType):
             channel (int): Button MIDI channel
             executor (int, optional): GMA3 Executor to map to. Defaults to None.
             select_page (int, optional): GMA3 executor page to select for device. Defaults to None.
+            toggle_encoder_layer (bool, optional): If True, the button will toggle the encoder layer on the device. Defaults to False.
 
         Raises:
-            ValueError: Cannot map a button to both an executor and a page
+            ValueError: Button can only have one purpose: executor, select_page, or toggle_encoder_layer
         """
-        if executor and select_page:
-            raise ValueError("Cannot map a button to both an executor and a page")
+        if (executor is not None) + (select_page is not None) + (toggle_encoder_layer is not None) != 1:
+            raise ValueError("Button can only have one purpose: executor, select_page, or toggle_encoder_layer")
 
         super().__init__(app)
         self._log: logging.Logger = logging.getLogger(self.__class__.__name__)
@@ -353,6 +354,7 @@ class Button(ButtonType):
         self._executor: int = executor
         self._select_page: int = select_page
         self._current_button_type: 'ButtonTypes' = None
+        self._toggle_encoder_layer: bool = toggle_encoder_layer
 
         self._app.OSC.add_route(f'/{self._uid}', self.__gma_update)
         self._app.MIDI.add_route(device, MIDIMessageTypes.note_on, channel, signal, self.__note_on)
@@ -384,9 +386,22 @@ class Button(ButtonType):
             self._app.OSC.send(f"/Page{self._device._page + 1}/Key{self._executor}", 1)
             associated_faders = self._app.get_faders(self._executor)
             for fader in associated_faders:
-                fader._update_mode(self._app, fader, self._current_button_type, 'highlight')
+                if fader._current_fader_type:
+                    fader._update_mode(self._app, fader, self._current_button_type, 'highlight')
         elif self._select_page != None:
             self._device._set_page(self._select_page)
+        elif self._toggle_encoder_layer:
+            self._app._encoder_layer = not self._app._encoder_layer
+            if self._app._encoder_layer:
+                for fader in self._app.get_encoders():
+                    fader._update_mode(fader._app, fader, None, 'highlight')
+                    fader._encoder_value_cache = 64
+                    fader._app.MIDI.send_control_change(fader._device, MIDIMessageTypes.control_change, fader._channel, fader._signal, 64)
+                    fader._update_mode(fader._app, self, None, 'super_highlight')
+            else:
+                for fader in self._app.get_encoders():
+                    fader._update_mode(fader._app, fader, fader._current_fader_type, 'highlight')
+
     
     def __note_off(self, msg: mido.Message):
         self._log.fine(f"Button released | Executor: {self._executor} | Page: {self._select_page} | Current Button Type: {self._current_button_type} | {msg}")
@@ -395,28 +410,16 @@ class Button(ButtonType):
                 return
             self._app.OSC.send(f"/Page{self._device._page + 1}/Key{self._executor}", 0)
         
-        # Store the current time of the value change
-        Button._last_value_change = time.time()
-        
-        # To avoid bogging down MA, wait to update buttons and faders until fader values have stopped updating for 0.25s
-        def delayed_update():
-            while True:
-                current_time = time.time()
-                if current_time - Button._last_value_change >= 0.15:
-                    associated_buttons = self._app.get_buttons(self._executor)
-                    for button in associated_buttons:
-                        button._request_update()
-                    for button in ButtonType.blinking:
-                        button._request_update()
-                    associated_faders = self._app.get_faders(self._executor)
-                    for fader in associated_faders:
-                        fader._request_update()
-                    break
-                sleep(0.05)
+        if self._executor or self._select_page:
+            # Store the current time of the value change
+            Button._last_value_change = time.time()
+            
+            # To avoid bogging down MA, wait to update buttons and faders until fader values have stopped updating for 0.25s
+            delayed_update(self._app, self._executor, Button._last_value_change)
 
-        if not hasattr(self, '_update_thread') or not self._update_thread.is_alive():
-            self._update_thread = threading.Thread(target=delayed_update)
-            self._update_thread.start()
+            if not hasattr(self, '_update_thread') or not self._update_thread.is_alive():
+                self._update_thread = threading.Thread(target=delayed_update)
+                self._update_thread.start()
 
     def __gma_update(self, address: str, *args):
         self._log.debug(f"Button update received | Executor: {self._executor} | Page: {self._select_page} | Current Button Type: {self._current_button_type} | {args}")
@@ -427,21 +430,25 @@ class Button(ButtonType):
             if cue_number != "None":
                 self._start_blink(self)
                 for fader in associated_faders:
-                    fader._update_mode(self._app, fader, button_type, 'active')
+                    if fader._current_fader_type:
+                        fader._update_mode(self._app, fader, button_type, 'active')
             else:
                 self._stop_blink(self)
                 self._update_feedback(self._app, self, button_type, 'on')
                 for fader in associated_faders:
-                    fader._update_mode(self._app, fader, button_type, 'inactive')
+                    if fader._current_fader_type:
+                        fader._update_mode(self._app, fader, button_type, 'inactive')
         elif button_type:
             if cue_number != "None":
                 self._update_feedback(self._app, self, button_type, 'active')
                 for fader in associated_faders:
-                    fader._update_mode(self._app, fader, button_type, 'active')
+                    if fader._current_fader_type:
+                        fader._update_mode(self._app, fader, button_type, 'active')
             else:
                 self._update_feedback(self._app, self, button_type, 'on')
                 for fader in associated_faders:
-                    fader._update_mode(self._app, fader, button_type, 'inactive')
+                    if fader._current_fader_type:
+                        fader._update_mode(self._app, fader, button_type, 'inactive')
         else:
             self._update_feedback(self._app, self, button_type, 'off')
 
