@@ -195,9 +195,34 @@ app.register_fader(apc20, 210, InboundControlSignals.master_level.value, 0, True
 grid_button = ButtonType(app)
 grid_button.set_default_off(ClipLaunchLEDState.off)
 grid_button.set_default_on(ClipLaunchLEDState.green)
+
+grid_button.set_on("Black", ClipLaunchLEDState.red)
+grid_button.set_pressed("Black", ClipLaunchLEDState.off)
+
+grid_button.set_on("DoubleSpeed", ClipLaunchLEDState.green)
+grid_button.set_blink_on("DoubleSpeed", ClipLaunchLEDState.green)
+grid_button.set_blink_off("DoubleSpeed", ClipLaunchLEDState.yellow)
+
+grid_button.set_on("HalfSpeed", ClipLaunchLEDState.green)
+grid_button.set_blink_on("HalfSpeed", ClipLaunchLEDState.green)
+grid_button.set_blink_off("HalfSpeed", ClipLaunchLEDState.yellow)
+
+grid_button.set_on("LearnSpeed", ClipLaunchLEDState.green)
+grid_button.set_blink_on("LearnSpeed", ClipLaunchLEDState.green)
+grid_button.set_blink_off("LearnSpeed", ClipLaunchLEDState.yellow)
+
+grid_button.set_pressed("Flash", ClipLaunchLEDState.yellow)
+
+grid_button.set_pressed("Go+", ClipLaunchLEDState.yellow)
+
+grid_button.set_pressed("Go-", ClipLaunchLEDState.yellow)
+
+grid_button.set_pressed("Temp", ClipLaunchLEDState.yellow)
+
 grid_button.set_on("Toggle", ClipLaunchLEDState.yellow)
 grid_button.set_blink_on("Toggle", ClipLaunchLEDState.yellow)
 grid_button.set_blink_off("Toggle", ClipLaunchLEDState.off)
+
 grid_button.set_on("Off", ClipLaunchLEDState.red)
 grid_button.set_blink_on("Off", ClipLaunchLEDState.red)
 grid_button.set_blink_off("Off", ClipLaunchLEDState.off)
