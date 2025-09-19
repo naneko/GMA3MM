@@ -71,7 +71,7 @@ def encoder_minus(app: 'App', encoder_index: int):
     elif 5 <= encoder_index <= 6:
         lua_action = f"Pult():Children()[2]:Children()[1]:Children()[6]:Children()[5]:Children()[4]:Children()[3]:Children()[5]:Children()[7]:Children()[{encoder_index + 2}]:Children()[3]:Children()[1].setminus()"
 
-    app.OSC.send("/cmd", "lua '" + lua_action + "'")
+    app.OSC.send("/cmd", "lua '" + lua_action + "' /NoOops")
 
 def delayed_update(app: 'App', executor: int, last_value_change: float):
     while True:

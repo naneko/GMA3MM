@@ -24,7 +24,7 @@ mido.set_backend('mido.backends.portmidi')
 addLoggingLevel('FINE', logging.DEBUG - 5)
 
 console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
+console_handler.setLevel(logging.DEBUG)
 file_handler = logging.handlers.RotatingFileHandler(
     "gma3mm.log", maxBytes=5*1024*1024, backupCount=2)
 file_handler.setLevel(logging.DEBUG)

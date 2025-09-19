@@ -342,6 +342,7 @@ class Fader(FaderType):
         if self._current_fader_type is '':
             return
 
+        self._log.fine(f"Fader {self._executor} | Latch Logic | Old Value: {self._old_value} | Value: {value} | GMA latch Value: {self._gma_value}")
         if self._gma_value != -1 and self._latch: 
             if (
                 self._gma_value > self._old_value
@@ -349,12 +350,12 @@ class Fader(FaderType):
                 if (
                     self._gma_value > value
                 ):  # Then check if the current fader value is still less than the GMA3 value
-                    # print(f'Fader {ch} at {value} | Waiting for latch above {State.fader_values[ch]}', flush=True)
+                    self._log.fine(f'Fader {self._executor} at {value} | Was at {self._old_value} | Waiting for latch above {self._gma_value}', flush=True)
                     return
             # Fader was over latch
             elif self._gma_value < self._old_value:
                 if self._gma_value < value:  # Still over latch?
-                    # print(f'Fader {ch} at {value} | Waiting for latch below {State.fader_values[ch]}', flush=True)
+                    self._log.fine(f'Fader {self._executor} at {value} | Was at {self._old_value} | Waiting for latch below {self._gma_value}', flush=True)
                     return
         self._gma_value = -1
         # print(f'/Page{State.selected_page + 1}/Fader{ch} | {value}', flush=True)
@@ -382,11 +383,11 @@ class Fader(FaderType):
             threading.Thread(target=request_update, args=(self,)).start()
     
     def __gma_update(self, address: str, *args):
-        self._log.debug(f"Fader update received | Executor: {self._executor} | {args}")
         index, button_type, fader_type, fader_value, cue_number = args
+        self._log.debug(f"Fader update received | Executor: {self._executor} | Fader Type: {fader_type} | Fader Value: {fader_value} | {args}")
+        self._old_value = self._value
         self._value = fader_value
         self._gma_value = fader_value
-        self._old_value = self._value
         fader_value = int(remap(fader_value, 0, 100, 1, 127))
         self._app.MIDI.send_control_change(self._device, MIDIMessageTypes.control_change, self._channel, self._signal, fader_value)
         self._current_fader_type = fader_type

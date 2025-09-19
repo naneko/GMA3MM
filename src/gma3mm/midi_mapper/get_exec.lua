@@ -12,8 +12,13 @@ end
 if exec == nil then
     return
 end
-local cue_num = exec.object:Get("cueno")
-if cue_num == "" or cue_num == nil then
-    cue_num = "None"
+local cue_num = nil
+if exec.object ~= nil then
+    cue_num = exec.object:Get("cueno")
+    if cue_num == "" or cue_num == nil then
+        cue_num = "None"
+    end
+else
+    cue_num = 1
 end
-Cmd("SendOSC 2 \"/[[uid]],issfs," .. exec.index .. "," .. exec.key .. "," .. exec.fader .. "," .. exec:GetFader({}) .. "," .. cue_num .. "\"")
+CmdIndirect("SendOSC 2 \"/[[uid]],issfs," .. exec.index .. "," .. exec.key .. "," .. exec.fader .. "," .. exec:GetFader({}) .. "," .. cue_num .. "\" /NoOops")

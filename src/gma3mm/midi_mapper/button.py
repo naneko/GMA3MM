@@ -390,6 +390,7 @@ class Button(ButtonType):
                     fader._update_mode(self._app, fader, self._current_button_type, 'highlight')
         elif self._select_page != None:
             self._device._set_page(self._select_page)
+            # self._app.OSC.send("/cmd", f"Page {self._select_page + 1}")
         elif self._toggle_encoder_layer:
             self._app._encoder_layer = not self._app._encoder_layer
             if self._app._encoder_layer:
@@ -447,6 +448,10 @@ class Button(ButtonType):
                 for fader in associated_faders:
                     if fader._current_fader_type:
                         fader._update_mode(self._app, fader, button_type, 'inactive')
+        elif fader_type:
+            for fader in associated_faders:
+                if fader._current_fader_type:
+                    fader._update_mode(self._app, fader, button_type, 'active')
         else:
             self._update_feedback(self._app, self, button_type, 'off')
 
