@@ -420,6 +420,7 @@ class Button(ButtonType):
                 self._update_thread = threading.Thread(target=delayed_update, args=(self._app, self._executor, Button._last_value_change))
                 self._update_thread.start()
 
+    # Note: cue_number is now just a boolean that returns either 1 or "None"
     def __gma_update(self, address: str, *args):
         self._log.debug(f"Button update received | Executor: {self._executor} | Page: {self._select_page} | Current Button Type: {self._current_button_type} | {args}")
         index, button_type, fader_type, fader_value, cue_number = args

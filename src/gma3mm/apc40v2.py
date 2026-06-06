@@ -1,4 +1,5 @@
 import logging
+import platform
 from midi_mapper.app import App
 from midi_mapper.button import ButtonType
 
@@ -161,10 +162,13 @@ class InboundControlSignals(enum.IntEnum):
     cue_level = 0x2F
 
 
-# logging.basicConfig(level=logging.INFO)
+#logging.basicConfig(level=logging.DEBUG)
 #TODO: Allow shift button to be assigned that will flash relevant knobs without executing the function
 
-app = App("127.0.0.1", 8000, "127.0.0.1", 8001)
+if platform.system() == "Windows":
+    app = App("10.1.1.100", 8000, "10.1.1.100", 8001)
+else:
+    app = App("127.0.0.1", 8000, "127.0.0.1", 8001)
 
 apc40 = app.MIDI.add_device("Akai APC40", "Akai APC40")
 
@@ -184,35 +188,32 @@ grid_button.set_default_off(ClipLaunchLEDState.off)
 grid_button.set_default_on(ClipLaunchLEDState.green)
 
 grid_button.set_on("Black", ClipLaunchLEDState.red)
-grid_button.set_pressed("Black", ClipLaunchLEDState.off)
+# grid_button.set_pressed("Black", ClipLaunchLEDState.off)
 
-grid_button.set_on("DoubleSpeed", ClipLaunchLEDState.green)
-grid_button.set_blink_on("DoubleSpeed", ClipLaunchLEDState.green)
-grid_button.set_blink_off("DoubleSpeed", ClipLaunchLEDState.yellow)
+# TODO: Fix odd behavior when no fader value exists on multi-button execs
+grid_button.set_on("DoubleSpeed", ClipLaunchLEDState.red)
+grid_button.set_active("DoubleSpeed", ClipLaunchLEDState.red)
 
-grid_button.set_on("HalfSpeed", ClipLaunchLEDState.green)
-grid_button.set_blink_on("HalfSpeed", ClipLaunchLEDState.green)
-grid_button.set_blink_off("HalfSpeed", ClipLaunchLEDState.yellow)
+grid_button.set_on("HalfSpeed", ClipLaunchLEDState.red)
+grid_button.set_active("HalfSpeed", ClipLaunchLEDState.red)
 
-grid_button.set_on("LearnSpeed", ClipLaunchLEDState.green)
-grid_button.set_blink_on("LearnSpeed", ClipLaunchLEDState.green)
-grid_button.set_blink_off("LearnSpeed", ClipLaunchLEDState.yellow)
+grid_button.set_on("LearnSpeed", ClipLaunchLEDState.red)
+grid_button.set_active("LearnSpeed", ClipLaunchLEDState.red)
 
-grid_button.set_pressed("Flash", ClipLaunchLEDState.yellow)
+grid_button.set_on("Pause", ClipLaunchLEDState.red)
+grid_button.set_active("Pause", ClipLaunchLEDState.red)
 
-grid_button.set_pressed("Go+", ClipLaunchLEDState.yellow)
+# grid_button.set_pressed("Flash", ClipLaunchLEDState.yellow)
 
-grid_button.set_pressed("Go-", ClipLaunchLEDState.yellow)
+# grid_button.set_pressed("Go+", ClipLaunchLEDState.yellow)
 
-grid_button.set_pressed("Temp", ClipLaunchLEDState.yellow)
+# grid_button.set_pressed("Go-", ClipLaunchLEDState.yellow)
+
+# grid_button.set_pressed("Temp", ClipLaunchLEDState.yellow)
 
 grid_button.set_on("Toggle", ClipLaunchLEDState.yellow)
 grid_button.set_blink_on("Toggle", ClipLaunchLEDState.yellow)
-grid_button.set_blink_off("Toggle", ClipLaunchLEDState.off)
-
-grid_button.set_on("Off", ClipLaunchLEDState.red)
-grid_button.set_blink_on("Off", ClipLaunchLEDState.red)
-grid_button.set_blink_off("Off", ClipLaunchLEDState.off)
+grid_button.set_blink_off("Toggle", ClipLaunchLEDState.green)
 
 button = ButtonType(app)
 button.set_default_off(0)
@@ -301,53 +302,53 @@ knob.set_default_highlight(KnobLEDState.volume, 127)
 knob.set_inactive_mode("Toggle", KnobLEDState.single)
 
 app.register_fader(
-    apc40, 401, InboundControlSignals.device_knob_1.value, 0, False
+    apc40, 406, InboundControlSignals.device_knob_1.value, 0, False
 ).set_type(knob).set_feedback_config(OutboundControlSignals.device_knob_1_led, 0)
 app.register_fader(
-    apc40, 402, InboundControlSignals.device_knob_2.value, 0, False
+    apc40, 407, InboundControlSignals.device_knob_2.value, 0, False
 ).set_type(knob).set_feedback_config(OutboundControlSignals.device_knob_2_led, 0)
 app.register_fader(
-    apc40, 403, InboundControlSignals.device_knob_3.value, 0, False
+    apc40, 408, InboundControlSignals.device_knob_3.value, 0, False
 ).set_type(knob).set_feedback_config(OutboundControlSignals.device_knob_3_led, 0)
 app.register_fader(
-    apc40, 404, InboundControlSignals.device_knob_4.value, 0, False
+    apc40, 409, InboundControlSignals.device_knob_4.value, 0, False
 ).set_type(knob).set_feedback_config(OutboundControlSignals.device_knob_4_led, 0)
 app.register_fader(
-    apc40, 301, InboundControlSignals.device_knob_5.value, 0, False
+    apc40, 306, InboundControlSignals.device_knob_5.value, 0, False
 ).set_type(knob).set_feedback_config(OutboundControlSignals.device_knob_5_led, 0)
 app.register_fader(
-    apc40, 302, InboundControlSignals.device_knob_6.value, 0, False
+    apc40, 307, InboundControlSignals.device_knob_6.value, 0, False
 ).set_type(knob).set_feedback_config(OutboundControlSignals.device_knob_6_led, 0)
 app.register_fader(
-    apc40, 303, InboundControlSignals.device_knob_7.value, 0, False
+    apc40, 308, InboundControlSignals.device_knob_7.value, 0, False
 ).set_type(knob).set_feedback_config(OutboundControlSignals.device_knob_7_led, 0)
 app.register_fader(
-    apc40, 304, InboundControlSignals.device_knob_8.value, 0, False
+    apc40, 309, InboundControlSignals.device_knob_8.value, 0, False
 ).set_type(knob).set_feedback_config(OutboundControlSignals.device_knob_8_led, 0)
 
 app.register_fader(
-    apc40, 406, InboundControlSignals.track_knob_1.value, 0, False
+    apc40, 401, InboundControlSignals.track_knob_1.value, 0, False, 1
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_1_led, 0)
 app.register_fader(
-    apc40, 407, InboundControlSignals.track_knob_2.value, 0, False
+    apc40, 402, InboundControlSignals.track_knob_2.value, 0, False, 2
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_2_led, 0)
 app.register_fader(
-    apc40, 408, InboundControlSignals.track_knob_3.value, 0, False
+    apc40, 403, InboundControlSignals.track_knob_3.value, 0, False, 3
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_3_led, 0)
 app.register_fader(
-    apc40, 409, InboundControlSignals.track_knob_4.value, 0, False
+    apc40, 404, InboundControlSignals.track_knob_4.value, 0, False, 4
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_4_led, 0)
 app.register_fader(
-    apc40, 306, InboundControlSignals.track_knob_5.value, 0, False
+    apc40, 301, InboundControlSignals.track_knob_5.value, 0, False
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_5_led, 0)
 app.register_fader(
-    apc40, 307, InboundControlSignals.track_knob_6.value, 0, False
+    apc40, 302, InboundControlSignals.track_knob_6.value, 0, False, 5
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_6_led, 0)
 app.register_fader(
-    apc40, 308, InboundControlSignals.track_knob_7.value, 0, False
+    apc40, 303, InboundControlSignals.track_knob_7.value, 0, False, 6
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_7_led, 0)
 app.register_fader(
-    apc40, 309, InboundControlSignals.track_knob_8.value, 0, False
+    apc40, 304, InboundControlSignals.track_knob_8.value, 0, False
 ).set_type(knob).set_feedback_config(OutboundControlSignals.track_knob_8_led, 0)
 
 # Knob Buttons
@@ -363,5 +364,7 @@ app.register_button(apc40, 306, InboundNotes.pan.value, 0).set_type(knob_button)
 app.register_button(apc40, 307, InboundNotes.send_a.value, 0).set_type(knob_button)
 app.register_button(apc40, 308, InboundNotes.send_b.value, 0).set_type(knob_button)
 app.register_button(apc40, 309, InboundNotes.send_c.value, 0).set_type(knob_button)
+
+app.register_encoder_layer_button(apc40, InboundNotes.shift.value, 0)
 
 app.start(exception_hook=True)

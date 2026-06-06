@@ -382,6 +382,7 @@ class Fader(FaderType):
     def _request_update(self):
             threading.Thread(target=request_update, args=(self,)).start()
     
+    # Note: cue_number is now just a boolean that returns either 1 or "None"
     def __gma_update(self, address: str, *args):
         index, button_type, fader_type, fader_value, cue_number = args
         self._log.debug(f"Fader update received | Executor: {self._executor} | Fader Type: {fader_type} | Fader Value: {fader_value} | {args}")

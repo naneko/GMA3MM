@@ -14,8 +14,9 @@ if exec == nil then
 end
 local cue_num = nil
 if exec.object ~= nil then
-    cue_num = exec.object:Get("cueno")
-    if cue_num == "" or cue_num == nil then
+    if exec.object:HasActivePlayback() then
+        cue_num = 1
+    else
         cue_num = "None"
     end
 else

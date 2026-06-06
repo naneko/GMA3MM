@@ -17,7 +17,7 @@ from midi_mapper.osc_handler import OSCHandler
 if platform.system() == "Windows":
     os.add_dll_directory(Path(__file__).parent)
 
-mido.set_backend('mido.backends.portmidi')
+# mido.set_backend('mido.backends.portmidi')
 
 # TODO: On crash, send error midi state and then restart
 
