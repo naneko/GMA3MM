@@ -295,6 +295,7 @@ class Fader(FaderType):
         self._app: 'App' = app
         self._log: logging.Logger = logging.getLogger(self.__class__.__name__)
         self._uid: str = str(uuid.uuid4().int)
+        self._target_address = ""
         self._device: Device = device
         self._signal: int = signal
         self._channel: int = channel
@@ -339,7 +340,7 @@ class Fader(FaderType):
         value = remap(msg.value, 0, 127, 0, 100)
         self._value = value
 
-        if self._current_fader_type is '':
+        if self._current_fader_type == '':
             return
 
         self._log.fine(f"Fader {self._executor} | Latch Logic | Old Value: {self._old_value} | Value: {value} | GMA latch Value: {self._gma_value}")
@@ -363,7 +364,7 @@ class Fader(FaderType):
         self._app.MIDI.send_control_change(self._device, MIDIMessageTypes.control_change, self._channel, self._signal, int(remap(value, 0, 100, 1, 127)))
 
         # Update all associated faders
-        associated_faders = self._app.get_faders(self._executor)
+        associated_faders = self._app.get_faders(self._target_address)
         for fader in associated_faders:
             fader._value = value
             fader._gma_value = -1
@@ -376,7 +377,7 @@ class Fader(FaderType):
         
         # To avoid bogging down MA, wait to update buttons and faders until fader values have stopped updating for 0.25s
         if not hasattr(self, '_update_thread') or not self._update_thread.is_alive() and not self._latch:
-            self._update_thread = threading.Thread(target=delayed_update, args=(self._app, self._executor, Fader._last_value_change))
+            self._update_thread = threading.Thread(target=delayed_update, args=(self._app, self._target_address, Fader._last_value_change))
             self._update_thread.start()
     
     def _request_update(self):
@@ -384,7 +385,8 @@ class Fader(FaderType):
     
     # Note: cue_number is now just a boolean that returns either 1 or "None"
     def __gma_update(self, address: str, *args):
-        index, button_type, fader_type, fader_value, cue_number = args
+        index, button_type, fader_type, fader_value, cue_number, target_address = args
+        self._target_address = target_address
         self._log.debug(f"Fader update received | Executor: {self._executor} | Fader Type: {fader_type} | Fader Value: {fader_value} | {args}")
         self._old_value = self._value
         self._value = fader_value

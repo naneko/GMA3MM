@@ -348,6 +348,7 @@ class Button(ButtonType):
         super().__init__(app)
         self._log: logging.Logger = logging.getLogger(self.__class__.__name__)
         self._uid: str = str(uuid.uuid4().int)
+        self._target_address = ""
         self._device: Device = device
         self._signal: int = signal
         self._channel: int = channel
@@ -384,7 +385,7 @@ class Button(ButtonType):
             if not self._current_button_type:
                 return
             self._app.OSC.send(f"/Page{self._device._page + 1}/Key{self._executor}", 1)
-            associated_faders = self._app.get_faders(self._executor)
+            associated_faders = self._app.get_faders(self._target_address)
             for fader in associated_faders:
                 if fader._current_fader_type:
                     fader._update_mode(self._app, fader, self._current_button_type, 'highlight')
@@ -417,15 +418,16 @@ class Button(ButtonType):
             
             # To avoid bogging down MA, wait to update buttons and faders until fader values have stopped updating for 0.25s
             if not hasattr(self, '_update_thread') or not self._update_thread.is_alive():
-                self._update_thread = threading.Thread(target=delayed_update, args=(self._app, self._executor, Button._last_value_change))
+                self._update_thread = threading.Thread(target=delayed_update, args=(self._app, self._target_address, Button._last_value_change))
                 self._update_thread.start()
 
     # Note: cue_number is now just a boolean that returns either 1 or "None"
     def __gma_update(self, address: str, *args):
         self._log.debug(f"Button update received | Executor: {self._executor} | Page: {self._select_page} | Current Button Type: {self._current_button_type} | {args}")
-        index, button_type, fader_type, fader_value, cue_number = args
+        index, button_type, fader_type, fader_value, cue_number, target_address = args
+        self._target_address = target_address
         self._current_button_type = button_type
-        associated_faders = self._app.get_faders(self._executor)
+        associated_faders = self._app.get_faders(self._target_address)
         if self._is_blinkable():
             if cue_number != "None":
                 self._start_blink(self)

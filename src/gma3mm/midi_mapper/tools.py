@@ -73,16 +73,16 @@ def encoder_minus(app: 'App', encoder_index: int):
 
     app.OSC.send("/cmd", "lua '" + lua_action + "' /NoOops")
 
-def delayed_update(app: 'App', executor: int, last_value_change: float):
+def delayed_update(app: 'App', target_address: str, last_value_change: float):
     while True:
         current_time = time.time()
         if current_time - last_value_change >= 0.15:
-            associated_buttons = app.get_buttons(executor)
+            associated_buttons = app.get_buttons(target_address)
             for button in associated_buttons:
                 button._request_update()
             for button in app._buttons[0].blinking:
                 button._request_update()
-            associated_faders = app.get_faders(executor)
+            associated_faders = app.get_faders(target_address)
             for fader in associated_faders:
                 fader._request_update()
             break

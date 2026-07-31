@@ -33,7 +33,7 @@ logging.basicConfig(
     format="[%(asctime)s.%(msecs)03d][%(levelname)s][%(name)s] %(message)s",
     datefmt="%Y-%m-%d,%H:%M:%S",
     handlers=[console_handler, file_handler],
-    level=logging.DEBUG,
+    level=logging.FINE,
 )
 
 class App:
@@ -179,16 +179,16 @@ class App:
         self._buttons.append(button)
         return button
     
-    def get_faders(self, executor: int) -> list[Fader]:
-        """Get all faders for a specific executor
+    def get_faders(self, address: str) -> list[Fader]:
+        """Get all faders that control the same object
 
         Args:
-            executor (int): GMA3 executor number
+            address (str): GMA3 native address
 
         Returns:
             list[Fader]: List of fader objects
         """
-        return [f for f in self._faders if f._executor == executor]
+        return [f for f in self._faders if f._target_address == address]
     
     def get_encoders(self) -> list[Fader]:
         """
@@ -199,16 +199,16 @@ class App:
         """
         return [f for f in self._faders if f._encoder_layer_number is not None]
 
-    def get_buttons(self, executor: int) -> list[Button]:
-        """Get all buttons for a specific executor
+    def get_buttons(self, address: str) -> list[Button]:
+        """Get all buttons that control the same object
 
         Args:
-            executor (int): GMA3 executor number
+            address (str): GMA3 native address
 
         Returns:
             list[Button]: List of button objects
         """
-        return [b for b in self._buttons if b._executor == executor]
+        return [b for b in self._buttons if b._target_address == address]
 
 
 class ButtonTypes(enum.Enum):

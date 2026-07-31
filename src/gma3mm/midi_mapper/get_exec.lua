@@ -13,7 +13,9 @@ if exec == nil then
     return
 end
 local cue_num = nil
+local target_address = ""
 if exec.object ~= nil then
+    target_address = exec.object:AddrNative()
     if exec.object:HasActivePlayback() then
         cue_num = 1
     else
@@ -22,4 +24,4 @@ if exec.object ~= nil then
 else
     cue_num = 1
 end
-CmdIndirect("SendOSC 2 \"/[[uid]],issfs," .. exec.index .. "," .. exec.key .. "," .. exec.fader .. "," .. exec:GetFader({}) .. "," .. cue_num .. "\" /NoOops")
+CmdIndirect("SendOSC 2 \"/[[uid]],issfss," .. exec.index .. "," .. exec.key .. "," .. exec.fader .. "," .. exec:GetFader({}) .. "," .. cue_num .. "," .. target_address .. "\" /NoOops")
