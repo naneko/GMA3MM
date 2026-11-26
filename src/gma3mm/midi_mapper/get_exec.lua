@@ -1,0 +1,27 @@
+local page = DataPool().Pages[[[page]]]
+if page == nil then
+    return
+end
+local exec = nil
+for i = 1, #page:Children() do
+    if page:Children()[i].index == [[exec]] then
+        exec = page:Children()[i]
+        break
+    end
+end
+if exec == nil then
+    return
+end
+local cue_num = nil
+local target_address = ""
+if exec.object ~= nil then
+    target_address = exec.object:AddrNative()
+    if exec.object:HasActivePlayback() then
+        cue_num = 1
+    else
+        cue_num = "None"
+    end
+else
+    cue_num = 1
+end
+CmdIndirect("SendOSC 2 \"/[[uid]],issfss," .. exec.index .. "," .. exec.key .. "," .. exec.fader .. "," .. exec:GetFader({}) .. "," .. cue_num .. "," .. target_address .. "\" /NoOops")
