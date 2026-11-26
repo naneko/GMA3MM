@@ -351,12 +351,12 @@ class Fader(FaderType):
                 if (
                     self._gma_value > value
                 ):  # Then check if the current fader value is still less than the GMA3 value
-                    self._log.fine(f'Fader {self._executor} at {value} | Was at {self._old_value} | Waiting for latch above {self._gma_value}', flush=True)
+                    self._log.fine(f'Fader {self._executor} at {value} | Was at {self._old_value} | Waiting for latch above {self._gma_value}')
                     return
             # Fader was over latch
             elif self._gma_value < self._old_value:
                 if self._gma_value < value:  # Still over latch?
-                    self._log.fine(f'Fader {self._executor} at {value} | Was at {self._old_value} | Waiting for latch below {self._gma_value}', flush=True)
+                    self._log.fine(f'Fader {self._executor} at {value} | Was at {self._old_value} | Waiting for latch below {self._gma_value}')
                     return
         self._gma_value = -1
         # print(f'/Page{State.selected_page + 1}/Fader{ch} | {value}', flush=True)

@@ -64,6 +64,10 @@ class App:
         self._encoders: list[Fader] = []
         self._faders: list[Fader] = []
         self._encoder_layer: bool = False
+        self._script_dir = Path(__file__).parent
+        with open(self._script_dir / "get_exec.lua", "r") as f:
+            self._update_lua_script = f.readlines()
+            self._log.debug(self._update_lua_script)
         self._log.info("Initialized GMA3MM")
 
     @staticmethod

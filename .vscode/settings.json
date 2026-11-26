@@ -1,0 +1,61 @@
+{
+    "grandMa3.apiVersion": "2.3",
+    "Lua.workspace.library": [
+        "/Users/catbeam/.vscode/extensions/carrot-industries.ma3-lua-api-1.6.2/resources/2.3"
+    ],
+    "cSpell.dictionaryDefinitions": [
+        {
+            "name": "grandma3-api-2.3",
+            "path": "/Users/catbeam/.vscode/extensions/carrot-industries.ma3-lua-api-1.6.2/resources/2.3/ma3_dictionary_for_cspell.txt"
+        }
+    ],
+    "cSpell.dictionaries": [
+        "grandma3-api-2.3"
+    ],
+    "python-envs.pythonProjects": [
+        {
+            "path": "src/gma3mm/midi_mapper",
+            "envManager": "ms-python.python:venv",
+            "packageManager": "ms-python.python:pip"
+        }
+    ],
+    "terminal.integrated.profiles.osx": {
+        "GMA3 CMDLINE": {
+            "path": "/Applications/grandMA3.app/Contents/MacOS/gma3_2.4.2/app_terminal",
+            "icon": "light-bulb",
+            "args": ["CMDLINE 127.0.0.1"]
+        },
+        "GMA3 SYSMON": {
+            "path": "/Applications/grandMA3.app/Contents/MacOS/gma3_2.4.2/app_terminal",
+            "icon": "light-bulb",
+            "args": ["SYSMON 127.0.0.1"]
+        },
+        "bash": {
+            "path": "bash",
+            "args": [
+                "-l"
+            ],
+            "icon": "terminal-bash"
+        },
+        "zsh": {
+            "path": "zsh",
+            "args": [
+                "-l"
+            ]
+        },
+        "fish": {
+            "path": "fish",
+            "args": [
+                "-l"
+            ]
+        },
+        "tmux": {
+            "path": "tmux",
+            "icon": "terminal-tmux"
+        },
+        "pwsh": {
+            "path": "pwsh",
+            "icon": "terminal-powershell"
+        }
+    }
+}

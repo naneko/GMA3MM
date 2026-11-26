@@ -34,15 +34,14 @@ def request_update(control: Union['Button', 'Fader']):
     script_dir = Path(__file__).parent
     if control._executor is None or control._device._page is None:
         return
-    with open(script_dir / "get_exec.lua", "r") as f:
-        lua = f.readlines()
-        control._app.OSC.send(
-            "/cmd",
-            "lua '"
-            + ";".join(lua).replace("[[exec]]", str(control._executor)).replace(
-                "[[uid]]", control._uid).replace("[[page]]", str(control._device._page + 1)).replace("\n", "")
-            + "'",
-        )
+    lua = control._app._update_lua_script
+    control._app.OSC.send(
+        "/cmd",
+        "lua '"
+        + ";".join(lua).replace("[[exec]]", str(control._executor)).replace(
+            "[[uid]]", control._uid).replace("[[page]]", str(control._device._page + 1)).replace("\n", "")
+        + "'",
+    )
 
 
 def encoder_plus(app: 'App', encoder_index: int):

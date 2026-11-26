@@ -1,4 +1,4 @@
-local page = Root():Children()[13]:Children()[14]:Children()[1]:Children()[12]:Children()[[[page]]]
+local page = DataPool().Pages[[[page]]]
 if page == nil then
     return
 end
